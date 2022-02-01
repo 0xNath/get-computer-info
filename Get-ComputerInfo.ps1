@@ -115,10 +115,9 @@ Begin {
 
 
     # Function used to calculate the UpTime of a computer
-    function UpTime {
-        param ()
+    function UpTime([string]$ComputerName) {
 
-        $wmi_os = Get-WmiObject -class Win32_OperatingSystem -ComputerName $env:COMPUTERNAME
+        $wmi_os = Get-WmiObject -class Win32_OperatingSystem -ComputerName $ComputerName
         $up_time = ($wmi_os.ConvertToDateTime($wmi_os.LocalDateTime)) - ($wmi_os.ConvertToDateTime($wmi_os.LastBootUpTime))
 
         If ($up_time.Days -ge 2) {
@@ -154,7 +153,6 @@ Begin {
 
     # Test if the Output-path ("ReportPath") exists
     If ((Test-Path $Output) -eq $false) {
-
         $invalid_output_path_was_found = $true
 
         # Display an error message in console
@@ -189,7 +187,6 @@ Begin {
     If ($File) {
 
         If (((Test-Path $File) -eq $false) -or ((Test-Path $File -PathType Leaf) -eq $false)) {
-
             $invalid_txt_file_was_found = $true
 
             # Display an error message in console
@@ -211,7 +208,7 @@ Begin {
             #   \d      Any decimal digit.
             # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
             $real_input_path = (Resolve-Path $File).Path
-            $computer_list = (Get-Content $real_input_path) | Where { $_ -match '\S' }
+            $computer_list = (Get-Content $real_input_path) | Where-Object { $_ -match '\S' }
 
             ForEach ($item in $computer_list) {
                 $computers += $item
@@ -253,11 +250,10 @@ Process {
     # Try to process one available instance only once
     # Credit: Jeff Hicks: "Validating Computer Lists with PowerShell" https://www.petri.com/validating-computer-lists-with-powershell
     # $unique_computers = $computers.ToUpper() | select -Unique
-    $unique_computers = $computers | select -Unique
+    $unique_computers = $computers | Select-Object -Unique
 
     ForEach ($computer_candidate in $unique_computers) {
-
-        If ($computer_candidate -match '\d' -eq $true) {
+        If ($computer_candidate -match '^[\d]*$' -eq $true) {
 
             # Exclude computer candidate names that contain only numbers and return to the top of the program loop (ForEach $computer_candidate)
             #   \d      Any decimal digit.
@@ -276,7 +272,7 @@ Process {
         }
         Else {
             $connection = Test-Connection -ComputerName $computer_candidate -Count 1 -Quiet
-            sleep -m 200
+            Start-Sleep -m 200
 
             If ($connection -eq $true) {
                 $available_computers += $computer_candidate
@@ -508,7 +504,7 @@ Process {
             'Model Version'                = $system.SystemSKU
             'CPU'                          = $CPUArchitecture_data
             'Video Card'                   = (@(ForEach ($videocard in $video) {
-                        If ($videocard.AdapterDACType -ne $null) {
+                        If ($null -ne $videocard.AdapterDACType) {
                             [string]$videocard.Name.Replace('(R)', '') + ' (' + $videocard.AdapterDACType + ')'
                         }
                         Else {
@@ -516,7 +512,7 @@ Process {
                         } # else
                     }) | Out-String).Trim()
             'Video Card_br'                = (@(ForEach ($videocard in $video) {
-                        If ($videocard.AdapterDACType -ne $null) {
+                        If ($null -ne $videocard.AdapterDACType) {
                             [string]$videocard.Name.Replace('(R)', '') + ' (' + $videocard.AdapterDACType + ')'
                         }
                         Else {
@@ -551,7 +547,7 @@ Process {
             'BIOS Release Date'            = (Get-Date -year ($system.BIOSReleaseDate.split("/")[-1]) -month ($system.BIOSReleaseDate.split("/")[0]) -day ($system.BIOSReleaseDate.split("/")[1])).ToShortDateString()
             'OS Install Date'              = ($os.ConvertToDateTime($os.InstallDate)).ToShortDateString()
             'Last BootUp'                  = (($os.ConvertToDateTime($os.LastBootUpTime)).ToShortDateString() + ' ' + ($os.ConvertToDateTime($os.LastBootUpTime)).ToShortTimeString())
-            'UpTime'                       = (Uptime)
+            'UpTime'                       = Uptime($name)
             'Date'                         = $date
             'Daylight Bias'                = ((DayLight($timezone.DaylightBias)) + ' (' + $timezone.DaylightName + ')')
             'Time Offset (Current)'        = (DayLight($timezone.Bias))
@@ -570,7 +566,7 @@ Process {
             #  'Daylight In Effect'            = (Get-Date).IsDaylightSavingTime()
             'Time Zone'                    = $timezone.Description
             'Connectivity'                 = (@(ForEach ($adapter in $ethernet) {
-                        If ($adapter.NetConnectionID -ne $null) {
+                        If ($null -ne $adapter.NetConnectionID) {
                             [string]$adapter.ProductName.Replace('(R)', '') + ' (' + $adapter.NetConnectionID + ')'
                         }
                         Else {
@@ -578,7 +574,7 @@ Process {
                         } # else
                     }) | Out-String).Trim()
             'Connectivity_br'              = (@(ForEach ($adapter in $ethernet) {
-                        If ($adapter.NetConnectionID -ne $null) {
+                        If ($null -ne $adapter.NetConnectionID) {
                             [string]$adapter.ProductName.Replace('(R)', '') + ' (' + $adapter.NetConnectionID + ')'
                         }
                         Else {
@@ -767,7 +763,7 @@ Process {
         </tr>
         <tr>
             <th>Computer:</th>
-            <td>" + $host_name + "</td>
+            <td>" + ($osinfo | Select-Object -ExpandProperty 'Computer') + "</td>
         </tr>
         <tr>
             <th>Manufacturer:</th>
@@ -1239,14 +1235,14 @@ End {
 
     # Process the partition table
     $partition_table.PSObject.TypeNames.Insert(0, "PartitionTable")
-    $partition_table_selection = $partition_table | Sort Computer, Drive | Select-Object Computer, Drive, Label, 'File System', 'Boot Partition', Interface, 'Media Type', 'Partition Type', Partition, Used, 'Used (%)', 'Free Space Status', 'Total Size', 'Free Space', 'Free (%)'
-    $partition_table_selection_screen = $partition_table | Sort Computer, Drive | Select-Object Computer, Drive, Label, Interface, 'Media Type', Partition, 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
+    $partition_table_selection = $partition_table | Sort-Object Computer, Drive | Select-Object Computer, Drive, Label, 'File System', 'Boot Partition', Interface, 'Media Type', 'Partition Type', Partition, Used, 'Used (%)', 'Free Space Status', 'Total Size', 'Free Space', 'Free (%)'
+    $partition_table_selection_screen = $partition_table | Sort-Object Computer, Drive | Select-Object Computer, Drive, Label, Interface, 'Media Type', Partition, 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
 
 
     # Display the volumes in console
     $volumes.PSObject.TypeNames.Insert(0, "Volume")
-    $volumes_selection = $volumes | Sort Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Boot Volume', 'Indexing Enabled', 'PageFile Present', 'Block Size', 'Compressed', 'Automount', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
-    $volumes_selection_screen = $volumes | Sort Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
+    $volumes_selection = $volumes | Sort-Object Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Boot Volume', 'Indexing Enabled', 'PageFile Present', 'Block Size', 'Compressed', 'Automount', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
+    $volumes_selection_screen = $volumes | Sort-Object Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
     $volumes_header = "Volumes"
     $volumes_coline = "-------"
     Write-Output $volumes_header
@@ -1617,7 +1613,7 @@ End {
         }
         Finally {
 
-            If ($test -eq $null) {
+            If ($null -eq $test) {
 
                 $empty_line | Out-String
                 Write-Warning "It seems that the PowerShell version $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) doesn't contain the 'Get-ComputerInfo' cmdlet."
@@ -1647,7 +1643,7 @@ End {
                     Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("Get-ComputerInfo | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
                     Start-Sleep -Seconds 1
                 }
-                while ((( $jobs | where { $_.Command -eq 'Get-ComputerInfo' }).State) -eq 'Running' )
+                while ((( $jobs | Where-Object { $_.Command -eq 'Get-ComputerInfo' }).State) -eq 'Running' )
 
                 # Output the Get-ComputerInfo background job results as a text file
                 #   \S      Any nonwhitespace character (excludes space, tab and carriage return).
@@ -1655,8 +1651,8 @@ End {
                 # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
                 $gin = Receive-Job -Job $job
                 $gin | Out-File "$computer_info_original" -Encoding UTF8
-                $gin_selection = Get-Content $computer_info_original | Where { $_ -match ': \S' }
-                $gin_sorted = $gin_selection | sort
+                $gin_selection = Get-Content $computer_info_original | Where-Object { $_ -match ': \S' }
+                $gin_sorted = $gin_selection | Sort-Object
                 $gin_sorted | Out-File "$computer_info_txt" -Encoding UTF8
                 $empty_line | Out-String
                 Write-Output $gin_sorted
