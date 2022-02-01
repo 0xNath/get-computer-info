@@ -5,25 +5,25 @@ Get-ComputerInfo.ps1
 
 [CmdletBinding()]
 Param (
-    [Parameter(ValueFromPipeline=$true,
-    ValueFromPipelineByPropertyName=$true,
-      HelpMessage="`r`nComputer: Which computers would you like to target? `r`n`r`nPlease enter computer names or IP addresses, one in each line. `r`n`r`nNotes:`r`n`t- To stop entering new values, please press [Enter] at an empty input row (and the script will run). `r`n`t- To exit this script, please press [Ctrl] + C`r`n")]
+    [Parameter(ValueFromPipeline = $true,
+        ValueFromPipelineByPropertyName = $true,
+        HelpMessage = "`r`nComputer: Which computers would you like to target? `r`n`r`nPlease enter computer names or IP addresses, one in each line. `r`n`r`nNotes:`r`n`t- To stop entering new values, please press [Enter] at an empty input row (and the script will run). `r`n`t- To exit this script, please press [Ctrl] + C`r`n")]
     [Alias("ComputerName")]
     [string[]]$Computer = "$env:COMPUTERNAME",
-    [Parameter(HelpMessage="`r`nOutput: In which folder or directory would you like to find the outputted files? `r`n`r`nPlease enter a valid file system path to a directory (a full path name of a directory i.e. folder path such as C:\Windows). `r`n`r`nNotes:`r`n`t- If the path name includes space characters, please enclose the path name in quotation marks (single or double). `r`n`t- The output of GatherNetworkInfo.vbs script may be found inside the '%windir%\system32\Config' directory. `r`n")]
+    [Parameter(HelpMessage = "`r`nOutput: In which folder or directory would you like to find the outputted files? `r`n`r`nPlease enter a valid file system path to a directory (a full path name of a directory i.e. folder path such as C:\Windows). `r`n`r`nNotes:`r`n`t- If the path name includes space characters, please enclose the path name in quotation marks (single or double). `r`n`t- The output of GatherNetworkInfo.vbs script may be found inside the '%windir%\system32\Config' directory. `r`n")]
     [Alias("ReportPath")]
     [string]$Output = "$env:temp",
-    [Parameter(HelpMessage="`r`nFile: Where is the txt file located, which contains the remote computer names? `r`n`r`nPlease enter a valid system filename ('FullPath'), which preferably includes the path to the file as well (a full path name of a file such as C:\Windows\file.txt). `r`n`r`nNotes:`r`n`t- If no path is defined, the current directory gets searched for the text file. `r`n`t- If the full filename or the directory name includes space characters, `r`n`t   please enclose the whole inputted string in quotation marks (single or double). `r`n`t- The values inside the text file could be computer names or IP addresses, one in each line. `r`n`t- If remote computers are specified, this script will use Windows Management Instrumentation (WMI) over Remote Procedure Calls (RPCs). `r`n")]
-    [Alias("ListOfComputersInATxtFile","List")]
+    [Parameter(HelpMessage = "`r`nFile: Where is the txt file located, which contains the remote computer names? `r`n`r`nPlease enter a valid system filename ('FullPath'), which preferably includes the path to the file as well (a full path name of a file such as C:\Windows\file.txt). `r`n`r`nNotes:`r`n`t- If no path is defined, the current directory gets searched for the text file. `r`n`t- If the full filename or the directory name includes space characters, `r`n`t   please enclose the whole inputted string in quotation marks (single or double). `r`n`t- The values inside the text file could be computer names or IP addresses, one in each line. `r`n`t- If remote computers are specified, this script will use Windows Management Instrumentation (WMI) over Remote Procedure Calls (RPCs). `r`n")]
+    [Alias("ListOfComputersInATxtFile", "List")]
     [string]$File,
     [switch]$SystemInfo,
-    [Alias("ExtractMsInfo32ToAFile","ExtractMsInfo32","MsInfo32ContentsToFile","MsInfo32Report","Expand","Export")]
+    [Alias("ExtractMsInfo32ToAFile", "ExtractMsInfo32", "MsInfo32ContentsToFile", "MsInfo32Report", "Expand", "Export")]
     [switch]$Extract,
-    [Alias("OpenMsInfo32PopUpWindow","Window")]
+    [Alias("OpenMsInfo32PopUpWindow", "Window")]
     [switch]$MsInfo32,
     [Alias("Vbs")]
     [switch]$GatherNetworkInfo,
-    [Alias("GetComputerInfoCmdlet","GetComputerInfo")]
+    [Alias("GetComputerInfoCmdlet", "GetComputerInfo")]
     [switch]$Cmdlet
 )
 
@@ -75,15 +75,18 @@ Begin {
             $drive_size = $size / 1KB
             $drive_size = [Math]::Round($drive_size, 2)
             [string]$drive_size + ' KB'
-        } ElseIf ($size -lt 1GB) {
+        }
+        ElseIf ($size -lt 1GB) {
             $drive_size = $size / 1MB
             $drive_size = [Math]::Round($drive_size, 2)
             [string]$drive_size + ' MB'
-        } ElseIf ($size -lt 1TB) {
+        }
+        ElseIf ($size -lt 1TB) {
             $drive_size = $size / 1GB
             $drive_size = [Math]::Round($drive_size, 2)
             [string]$drive_size + ' GB'
-        } Else {
+        }
+        Else {
             $drive_size = $size / 1TB
             $drive_size = [Math]::Round($drive_size, 2)
             [string]$drive_size + ' TB'
@@ -97,12 +100,15 @@ Begin {
         If ($minutes -gt 0) {
             $hours = ($minutes / 60)
             [string]'+' + $hours + ' h'
-        } ElseIf ($minutes -lt 0) {
+        }
+        ElseIf ($minutes -lt 0) {
             $hours = ($minutes / 60)
             [string]$hours + ' h'
-        } ElseIf ($minutes -eq 0) {
+        }
+        ElseIf ($minutes -eq 0) {
             [string]'0 h (GMT)'
-        } Else {
+        }
+        Else {
             [string]''
         } # else
     } # function
@@ -117,25 +123,30 @@ Begin {
 
         If ($up_time.Days -ge 2) {
             $uptime_result = [string]$up_time.Days + ' days ' + $up_time.Hours + ' h ' + $up_time.Minutes + ' min'
-        } ElseIf ($up_time.Days -gt 0) {
+        }
+        ElseIf ($up_time.Days -gt 0) {
             $uptime_result = [string]$up_time.Days + ' day ' + $up_time.Hours + ' h ' + $up_time.Minutes + ' min'
-        } ElseIf ($up_time.Hours -gt 0) {
+        }
+        ElseIf ($up_time.Hours -gt 0) {
             $uptime_result = [string]$up_time.Hours + ' h ' + $up_time.Minutes + ' min'
-        } ElseIf ($up_time.Minutes -gt 0) {
+        }
+        ElseIf ($up_time.Minutes -gt 0) {
             $uptime_result = [string]$up_time.Minutes + ' min ' + $up_time.Seconds + ' sec'
-        } ElseIf ($up_time.Seconds -gt 0) {
+        }
+        ElseIf ($up_time.Seconds -gt 0) {
             $uptime_result = [string]$up_time.Seconds + ' sec'
-        } Else {
+        }
+        Else {
             $uptime_result = [string]''
         } # else (if)
 
-            If ($uptime_result.Contains(" 0 h")) {
-                $uptime_result = $uptime_result.Replace(" 0 h"," ")
-                } If ($uptime_result.Contains(" 0 min")) {
-                    $uptime_result = $uptime_result.Replace(" 0 min"," ")
-                    } If ($uptime_result.Contains(" 0 sec")) {
-                    $uptime_result = $uptime_result.Replace(" 0 sec"," ")
-            } # if ($uptime_result: first)
+        If ($uptime_result.Contains(" 0 h")) {
+            $uptime_result = $uptime_result.Replace(" 0 h", " ")
+        } If ($uptime_result.Contains(" 0 min")) {
+            $uptime_result = $uptime_result.Replace(" 0 min", " ")
+        } If ($uptime_result.Contains(" 0 sec")) {
+            $uptime_result = $uptime_result.Replace(" 0 sec", " ")
+        } # if ($uptime_result: first)
 
         $uptime_result
     } # function
@@ -158,7 +169,8 @@ Begin {
         Exit
         Return
 
-    } Else {
+    }
+    Else {
 
         # Resolve the Output-path ("ReportPath") (if the Output-path is specified as relative)
         $real_output_path = Resolve-Path -Path $Output
@@ -191,7 +203,8 @@ Begin {
             Exit
             Return
 
-        } Else {
+        }
+        Else {
 
             # Resolve path (if path is specified as relative)
             #   \S      Any nonwhitespace character (excludes space, tab and carriage return).
@@ -200,12 +213,13 @@ Begin {
             $real_input_path = (Resolve-Path $File).Path
             $computer_list = (Get-Content $real_input_path) | Where { $_ -match '\S' }
 
-                    ForEach ($item in $computer_list) {
-                        $computers += $item
-                    } # ForEach $item
+            ForEach ($item in $computer_list) {
+                $computers += $item
+            } # ForEach $item
 
         } # Else (If Test-Path $File)
-    } Else {
+    }
+    Else {
         $continue = $true
     } # Else (If $File)
 
@@ -215,18 +229,19 @@ Begin {
         ForEach ($individual_computer in $Computer) {
             $computers += $individual_computer
         } # ForEach $item
-    } Else {
+    }
+    Else {
         # Take the objects that are piped into the script
         $computers += @($input)
     } # Else (If $FilePath)
 
 
     # Count the amount of switches used
-    If ($SystemInfo)            { $num_switches++ }
-    If ($MsInfo32)              { $num_switches++ }
-    If ($Extract)               { $num_switches++; $num_switches++ }
-    If ($GatherNetworkInfo)     { $num_switches++ }
-    If ($Cmdlet)                { $num_switches++ }
+    If ($SystemInfo) { $num_switches++ }
+    If ($MsInfo32) { $num_switches++ }
+    If ($Extract) { $num_switches++; $num_switches++ }
+    If ($GatherNetworkInfo) { $num_switches++ }
+    If ($Cmdlet) { $num_switches++ }
 
 } # Begin
 
@@ -240,39 +255,41 @@ Process {
     # $unique_computers = $computers.ToUpper() | select -Unique
     $unique_computers = $computers | select -Unique
 
-        ForEach ($computer_candidate in $unique_computers) {
+    ForEach ($computer_candidate in $unique_computers) {
 
-            If ($computer_candidate -match '\d' -eq $true){
+        If ($computer_candidate -match '\d' -eq $true) {
 
-                # Exclude computer candidate names that contain only numbers and return to the top of the program loop (ForEach $computer_candidate)
-                #   \d      Any decimal digit.
-                #   \s      Any whitespace character.
-                # $env:USERNAME
-                # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
+            # Exclude computer candidate names that contain only numbers and return to the top of the program loop (ForEach $computer_candidate)
+            #   \d      Any decimal digit.
+            #   \s      Any whitespace character.
+            # $env:USERNAME
+            # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
+            $empty_line | Out-String
+            Write-Warning "Computer '$computer_candidate': Computer name cannot contain only numbers."
+            $empty_line | Out-String
+            Write-Verbose "Please consider checking that the computer name '$computer_candidate' was typed correctly. Computer name cannot contain only numbers, may not be identical with the user name and cannot contain spaces." -verbose
+            $empty_line | Out-String
+            $skip_text = "Didn't detect '$computer_candidate'."
+            Write-Output $skip_text
+            Continue
+
+        }
+        Else {
+            $connection = Test-Connection -ComputerName $computer_candidate -Count 1 -Quiet
+            sleep -m 200
+
+            If ($connection -eq $true) {
+                $available_computers += $computer_candidate
+            }
+            Else {
+                # Notify the user about the unavailable computers
                 $empty_line | Out-String
-                Write-Warning "Computer '$computer_candidate': Computer name cannot contain only numbers."
-                $empty_line | Out-String
-                Write-Verbose "Please consider checking that the computer name '$computer_candidate' was typed correctly. Computer name cannot contain only numbers, may not be identical with the user name and cannot contain spaces." -verbose
-                $empty_line | Out-String
-                $skip_text = "Didn't detect '$computer_candidate'."
-                Write-Output $skip_text
-                Continue
+                Write-Verbose "The computer '$computer_candidate' could not be found." -verbose
+                $unavailable_computers += $computer_candidate
 
-            } Else {
-                $connection = Test-Connection -ComputerName $computer_candidate -Count 1 -Quiet
-                sleep -m 200
-
-                If ($connection -eq $true) {
-                    $available_computers += $computer_candidate
-                } Else {
-                    # Notify the user about the unavailable computers
-                    $empty_line | Out-String
-                    Write-Verbose "The computer '$computer_candidate' could not be found." -verbose
-                    $unavailable_computers += $computer_candidate
-
-                } # Else (If Test-Connection)
-            } # Else
-        } # ForEach
+            } # Else (If Test-Connection)
+        } # Else
+    } # ForEach
 
     If ($available_computers.Count -eq 0) {
         $empty_line | Out-String
@@ -281,7 +298,8 @@ Process {
         $empty_line | Out-String
         Exit
 
-    } Else {
+    }
+    Else {
 
         # Display a welcoming screen in console
         $empty_line | Out-String
@@ -293,22 +311,22 @@ Process {
 
 
     # Set the progress bar variables ($id denominates different progress bars, if more than one is being displayed)
-    $activity           = "Retrieving Remote Computer Info"
-    $status             = " "
-    $task               = "Setting Initial Variables"
-    $num_computers      = $available_computers.Count
-    $threshold          = ($num_computers + $num_switches)
-    $activities         = (($num_computers * 2) + $num_switches)
-    $total_steps        = (($num_computers * 2) + $num_switches + 1 )
-    $task_number        = 0
-    $name_count         = 0
-    $switch_count       = 0
-    $id                 = 1
+    $activity = "Retrieving Remote Computer Info"
+    $status = " "
+    $task = "Setting Initial Variables"
+    $num_computers = $available_computers.Count
+    $threshold = ($num_computers + $num_switches)
+    $activities = (($num_computers * 2) + $num_switches)
+    $total_steps = (($num_computers * 2) + $num_switches + 1 )
+    $task_number = 0
+    $name_count = 0
+    $switch_count = 0
+    $id = 1
 
-                        # Start the progress bar if there is more than one unique computer to process or any swithes were activated
-                        If ($threshold -ge 2) {
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete ((0.000002 / $total_steps) * 100)
-                        } # If ($threshold)
+    # Start the progress bar if there is more than one unique computer to process or any swithes were activated
+    If ($threshold -ge 2) {
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete ((0.000002 / $total_steps) * 100)
+    } # If ($threshold)
 
 
     ForEach ($name in $available_computers) {
@@ -317,20 +335,21 @@ Process {
         $task_number++
         $name_count++
 
-                        # Update the progress bar if there is more than one unique computer to process or any swithes were activated
-                        If ($threshold -ge 2) {
-                            $activity = "Retrieving Remote Computer Info $task_number/$activities"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $name -PercentComplete (($task_number / $total_steps) * 100)
-                        } # If ($threshold)
+        # Update the progress bar if there is more than one unique computer to process or any swithes were activated
+        If ($threshold -ge 2) {
+            $activity = "Retrieving Remote Computer Info $task_number/$activities"
+            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $name -PercentComplete (($task_number / $total_steps) * 100)
+        } # If ($threshold)
 
         # Read the registry
         $reg_key = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
 
-                If ( -not ( Test-Path $reg_key )) {
-                    $continue = $true
-                } Else {
-                    $registry = Get-ItemProperty -Path $reg_key
-                } # Else
+        If ( -not ( Test-Path $reg_key )) {
+            $continue = $true
+        }
+        Else {
+            $registry = Get-ItemProperty -Path $reg_key
+        } # Else
 
         # Retrieve basic os and computer related information with WMI and display it in console
         $bios = Get-WmiObject -class Win32_BIOS -ComputerName $name
@@ -349,237 +368,247 @@ Process {
         $powershell = $PSVersionTable.PSVersion
 
 
-                # Source: https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
-                Switch ($compsys.DomainRole) {
-                    { $_ -lt 0 } { $domain_role = "" }
-                    { $_ -eq 0 } { $domain_role = "Standalone Workstation" }
-                    { $_ -eq 1 } { $domain_role = "Member Workstation" }
-                    { $_ -eq 2 } { $domain_role = "Standalone Server" }
-                    { $_ -eq 3 } { $domain_role = "Member Server" }
-                    { $_ -eq 4 } { $domain_role = "Backup Domain Controller" }
-                    { $_ -eq 5 } { $domain_role = "Primary Domain Controller" }
-                    { $_ -gt 5 } { $domain_role = "" }
-                } # switch domainrole
+        # Source: https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
+        Switch ($compsys.DomainRole) {
+            { $_ -lt 0 } { $domain_role = "" }
+            { $_ -eq 0 } { $domain_role = "Standalone Workstation" }
+            { $_ -eq 1 } { $domain_role = "Member Workstation" }
+            { $_ -eq 2 } { $domain_role = "Standalone Server" }
+            { $_ -eq 3 } { $domain_role = "Member Server" }
+            { $_ -eq 4 } { $domain_role = "Backup Domain Controller" }
+            { $_ -eq 5 } { $domain_role = "Primary Domain Controller" }
+            { $_ -gt 5 } { $domain_role = "" }
+        } # switch domainrole
 
 
-                # Source: https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
-                Switch ($os.ProductType) {
-                    { $_ -lt 1 } { $product_type = "" }
-                    { $_ -eq 1 } { $product_type = "Work Station" }
-                    { $_ -eq 2 } { $product_type = "Domain Controller" }
-                    { $_ -eq 3 } { $product_type = "Server" }
-                    { $_ -gt 3 } { $product_type = "" }
-                } # switch producttype
+        # Source: https://msdn.microsoft.com/en-us/library/aa394239(v=vs.85).aspx
+        Switch ($os.ProductType) {
+            { $_ -lt 1 } { $product_type = "" }
+            { $_ -eq 1 } { $product_type = "Work Station" }
+            { $_ -eq 2 } { $product_type = "Domain Controller" }
+            { $_ -eq 3 } { $product_type = "Server" }
+            { $_ -gt 3 } { $product_type = "" }
+        } # switch producttype
 
 
-                # Source: https://msdn.microsoft.com/en-us/library/aa394474(v=vs.85).aspx
-                Switch ($enclosure.ChassisTypes) {
-                    { $_ -lt 1 } { $chassis = "" }
-                    { $_ -eq 1 } { $chassis = "Other" }
-                    { $_ -eq 2 } { $chassis = "Unknown" }
-                    { $_ -eq 3 } { $chassis = "Desktop " }
-                    { $_ -eq 4 } { $chassis = "Low Profile Desktop" }
-                    { $_ -eq 5 } { $chassis = "Pizza Box" }
-                    { $_ -eq 6 } { $chassis = "Mini Tower" }
-                    { $_ -eq 7 } { $chassis = "Tower" }
-                    { $_ -eq 8 } { $chassis = "Portable" }
-                    { $_ -eq 9 } { $chassis = "Laptop" }
-                    { $_ -eq 10 } { $chassis = "Notebook" }
-                    { $_ -eq 11 } { $chassis = "Hand Held" }
-                    { $_ -eq 12 } { $chassis = "Docking Station" }
-                    { $_ -eq 13 } { $chassis = "All in One" }
-                    { $_ -eq 14 } { $chassis = "Sub Notebook" }
-                    { $_ -eq 15 } { $chassis = "Space-Saving" }
-                    { $_ -eq 16 } { $chassis = "Lunch Box" }
-                    { $_ -eq 17 } { $chassis = "Main System Chassis" }
-                    { $_ -eq 18 } { $chassis = "Expansion Chassis" }
-                    { $_ -eq 19 } { $chassis = "SubChassis" }
-                    { $_ -eq 20 } { $chassis = "Bus Expansion Chassis" }
-                    { $_ -eq 21 } { $chassis = "Peripheral Chassis" }
-                    { $_ -eq 22 } { $chassis = "Storage Chassis" }
-                    { $_ -eq 23 } { $chassis = "Rack Mount Chassis" }
-                    { $_ -eq 24 } { $chassis = "Sealed-Case PC" }
-                    { $_ -gt 24 } { $chassis = "" }
-                } # switch chassistypes
+        # Source: https://msdn.microsoft.com/en-us/library/aa394474(v=vs.85).aspx
+        Switch ($enclosure.ChassisTypes) {
+            { $_ -lt 1 } { $chassis = "" }
+            { $_ -eq 1 } { $chassis = "Other" }
+            { $_ -eq 2 } { $chassis = "Unknown" }
+            { $_ -eq 3 } { $chassis = "Desktop " }
+            { $_ -eq 4 } { $chassis = "Low Profile Desktop" }
+            { $_ -eq 5 } { $chassis = "Pizza Box" }
+            { $_ -eq 6 } { $chassis = "Mini Tower" }
+            { $_ -eq 7 } { $chassis = "Tower" }
+            { $_ -eq 8 } { $chassis = "Portable" }
+            { $_ -eq 9 } { $chassis = "Laptop" }
+            { $_ -eq 10 } { $chassis = "Notebook" }
+            { $_ -eq 11 } { $chassis = "Hand Held" }
+            { $_ -eq 12 } { $chassis = "Docking Station" }
+            { $_ -eq 13 } { $chassis = "All in One" }
+            { $_ -eq 14 } { $chassis = "Sub Notebook" }
+            { $_ -eq 15 } { $chassis = "Space-Saving" }
+            { $_ -eq 16 } { $chassis = "Lunch Box" }
+            { $_ -eq 17 } { $chassis = "Main System Chassis" }
+            { $_ -eq 18 } { $chassis = "Expansion Chassis" }
+            { $_ -eq 19 } { $chassis = "SubChassis" }
+            { $_ -eq 20 } { $chassis = "Bus Expansion Chassis" }
+            { $_ -eq 21 } { $chassis = "Peripheral Chassis" }
+            { $_ -eq 22 } { $chassis = "Storage Chassis" }
+            { $_ -eq 23 } { $chassis = "Rack Mount Chassis" }
+            { $_ -eq 24 } { $chassis = "Sealed-Case PC" }
+            { $_ -gt 24 } { $chassis = "" }
+        } # switch chassistypes
 
-                    $is_a_laptop = $false
+        $is_a_laptop = $false
 
-                        If (($chassis -eq "Laptop") -or ($chassis -eq "Notebook") -or ($chassis -eq "Sub Notebook")) {
-                            $is_a_laptop = $true
-                        } Else {
-                            $continue = $true
-                        } # Else
+        If (($chassis -eq "Laptop") -or ($chassis -eq "Notebook") -or ($chassis -eq "Sub Notebook")) {
+            $is_a_laptop = $true
+        }
+        Else {
+            $continue = $true
+        } # Else
 
-                # Source: https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
-                Switch ($compsys.PCSystemType) {
-                    { $_ -lt 0 } { $pc_type = "" }
-                    { $_ -eq 0 } { $pc_type = "Unspecified" }
-                    { $_ -eq 1 } { $pc_type = "Desktop" }
-                    { $_ -eq 2 } { $pc_type = "Mobile" }
-                    { $_ -eq 3 } { $pc_type = "Workstation" }
-                    { $_ -eq 4 } { $pc_type = "Enterprise Server" }
-                    { $_ -eq 5 } { $pc_type = "Small Office and Home Office (SOHO) Server" }
-                    { $_ -eq 6 } { $pc_type = "Appliance PC" }
-                    { $_ -eq 7 } { $pc_type = "Performance Server" }
-                    { $_ -eq 8 } { $pc_type = "Maximum" }
-                    { $_ -gt 8 } { $pc_type = "" }
-                } # switch pcsystemtype
-
-
-                # Source: https://msdn.microsoft.com/en-us/library/aa394512(v=vs.85).aspx
-                Switch ($video.CurrentScanMode) {
-                    { $_ -lt 1 } { $scan_mode = "" }
-                    { $_ -eq 1 } { $scan_mode = "Other" }
-                    { $_ -eq 2 } { $scan_mode = "Unknown" }
-                    { $_ -eq 3 } { $scan_mode = "Interlaced" }
-                    { $_ -eq 4 } { $scan_mode = "Noninterlaced" }
-                    { $_ -gt 4 } { $scan_mode = "" }
-                } # switch CurrentScanMode
+        # Source: https://msdn.microsoft.com/en-us/library/aa394102(v=vs.85).aspx
+        Switch ($compsys.PCSystemType) {
+            { $_ -lt 0 } { $pc_type = "" }
+            { $_ -eq 0 } { $pc_type = "Unspecified" }
+            { $_ -eq 1 } { $pc_type = "Desktop" }
+            { $_ -eq 2 } { $pc_type = "Mobile" }
+            { $_ -eq 3 } { $pc_type = "Workstation" }
+            { $_ -eq 4 } { $pc_type = "Enterprise Server" }
+            { $_ -eq 5 } { $pc_type = "Small Office and Home Office (SOHO) Server" }
+            { $_ -eq 6 } { $pc_type = "Appliance PC" }
+            { $_ -eq 7 } { $pc_type = "Performance Server" }
+            { $_ -eq 8 } { $pc_type = "Maximum" }
+            { $_ -gt 8 } { $pc_type = "" }
+        } # switch pcsystemtype
 
 
-                # Source: https://www.autoitscript.com/autoit3/docs/appendix/OSLangCodes.htm
-                $os_Language = @{ 4 = "Chinese - Simplified"; 1025 = "Arabic - Saudi Arabia"; 1026 = "Bulgarian - Bulgaria"; 1027 = "Catalan - Spain"; 1028 = "Chinese (Traditional) - Taiwan"; 1029 = "Czech - Czech Republic"; 1030 = "Danish - Denmark"; 1031 = "German - Germany"; 1032 = "Greek - Greece"; 1033 = "English - United States"; 1034 = "Spanish - Spain"; 1035 = "Finnish - Finland"; 1036 = "French - France"; 1037 = "Hebrew - Israel"; 1038 = "Hungarian - Hungary"; 1039 = "Icelandic - Iceland"; 1040 = "Italian - Italy"; 1041 = "Japanese - Japan"; 1042 = "Korean - Korea"; 1043 = "Dutch - Netherlands"; 1044 = "Norwegian (Bokmål) - Norway"; 1045 = "Polish - Poland"; 1046 = "Portuguese - Brazil"; 1047 = "Romansh - Switzerland"; 1048 = "Romanian - Romania"; 1049 = "Russian - Russia"; 1050 = "Croatian - Croatia"; 1051 = "Slovak - Slovakia"; 1052 = "Albanian - Albania"; 1053 = "Swedish - Sweden"; 1054 = "Thai - Thailand"; 1055 = "Turkish - Turkey"; 1056 = "Urdu - Pakistan"; 1057 = "Indonesian - Indonesia"; 1058 = "Ukrainian - Ukraine"; 1059 = "Belarusian - Belarus"; 1060 = "Slovenian - Slovenia"; 1061 = "Estonian - Estonia"; 1062 = "Latvian - Latvia"; 1063 = "Lithuanian - Lithuanian"; 1064 = "Tajik (Cyrillic) - Tajikistan"; 1065 = "Persian - Iran"; 1066 = "Vietnamese - Vietnam"; 1067 = "Armenian - Armenia"; 1068 = "Azeri (Latin) - Azerbaijan"; 1069 = "Basque - Basque"; 1070 = "Upper Sorbian - Germany"; 1071 = "Macedonian - Macedonia"; 1074 = "Setswana / Tswana - South Africa"; 1076 = "isiXhosa - South Africa"; 1077 = "isiZulu - South Africa"; 1078 = "Afrikaans - South Africa"; 1079 = "Georgian - Georgia"; 1080 = "Faroese - Faroe Islands"; 1081 = "Hindi - India"; 1082 = "Maltese - Malta"; 1083 = "Sami (Northern) - Norway"; 1086 = "Malay - Malaysia"; 1087 = "Kazakh - Kazakhstan"; 1088 = "Kyrgyz - Kyrgyzstan"; 1089 = "Swahili - Kenya"; 1090 = "Turkmen - Turkmenistan"; 1091 = "Uzbek (Latin) - Uzbekistan"; 1092 = "Tatar - Russia"; 1093 = "Bangla - Bangladesh"; 1094 = "Punjabi - India"; 1095 = "Gujarati - India"; 1096 = "Oriya - India"; 1097 = "Tamil - India"; 1098 = "Telugu - India"; 1099 = "Kannada - India"; 1100 = "Malayalam - India"; 1101 = "Assamese - India"; 1102 = "Marathi - India"; 1103 = "Sanskrit - India"; 1104 = "Mongolian (Cyrillic) - Mongolia"; 1105 = "Tibetan - China"; 1106 = "Welsh - United Kingdom"; 1107 = "Khmer - Cambodia"; 1108 = "Lao - Lao PDR"; 1110 = "Galician - Spain"; 1111 = "Konkani - India"; 1113 = "(reserved) - (reserved)"; 1114 = "Syriac - Syria"; 1115 = "Sinhala - Sri Lanka"; 1116 = "Cherokee - Cherokee"; 1117 = "Inuktitut (Canadian_Syllabics) - Canada"; 1118 = "Amharic - Ethiopia"; 1121 = "Nepali - Nepal"; 1122 = "Frisian - Netherlands"; 1123 = "Pashto - Afghanistan"; 1124 = "Filipino - Philippines"; 1125 = "Divehi - Maldives"; 1128 = "Hausa - Nigeria"; 1130 = "Yoruba - Nigeria"; 1131 = "Quechua - Bolivia"; 1132 = "Sesotho sa Leboa - South Africa"; 1133 = "Bashkir - Russia"; 1134 = "Luxembourgish - Luxembourg"; 1135 = "Greenlandic - Greenland"; 1136 = "Igbo - Nigeria"; 1139 = "Tigrinya - Ethiopia"; 1141 = "Hawiian - United States"; 1144 = "Yi - China"; 1146 = "Mapudungun - Chile"; 1148 = "Mohawk - Canada"; 1150 = "Breton - France"; 1152 = "Uyghur - China"; 1153 = "Maori - New Zealand"; 1154 = "Occitan - France"; 1155 = "Corsican - France"; 1156 = "Alsatian - France"; 1157 = "Sakha - Russia"; 1158 = "K'iche - Guatemala"; 1159 = "Kinyarwanda - Rwanda"; 1160 = "Wolof - Senegal"; 1164 = "Dari - Afghanistan"; 1169 = "Scottish Gaelic - United Kingdom"; 1170 = "Central Kurdish - Iraq"; 2049 = "Arabic - Iraq"; 2051 = "Valencian - Valencia"; 2052 = "Chinese (Simplified) - China"; 2055 = "German - Switzerland"; 2057 = "English - United Kingdom"; 2058 = "Spanish - Mexico"; 2060 = "French - Belgium"; 2064 = "Italian - Switzerland"; 2067 = "Dutch - Belgium"; 2068 = "Norwegian (Nynorsk) - Norway"; 2070 = "Portuguese - Portugal"; 2074 = "Serbian (Latin) - Serbia and Montenegro"; 2077 = "Swedish - Finland"; 2080 = "Urdu - (reserved)"; 2092 = "Azeri (Cyrillic) - Azerbaijan"; 2094 = "Lower Sorbian - Germany"; 2098 = "Setswana / Tswana - Botswana"; 2107 = "Sami (Northern) - Sweden"; 2108 = "Irish - Ireland"; 2110 = "Malay - Brunei Darassalam"; 2115 = "Uzbek (Cyrillic) - Uzbekistan"; 2117 = "Bangla - Bangladesh"; 2118 = "Punjabi - Pakistan"; 2121 = "Tamil - Sri Lanka"; 2128 = "Mongolian (Mong) - Mongolia"; 2137 = "Sindhi - Pakistan"; 2141 = "Inuktitut (Latin) - Canada"; 2143 = "Tamazight (Latin) - Algeria"; 2151 = "Pular - Senegal"; 2155 = "Quechua - Ecuador"; 2163 = "Tigrinya - Eritrea"; 3073 = "Arabic - Egypt"; 3076 = "Chinese - Hong Kong SAR"; 3079 = "German - Austria"; 3081 = "English - Australia"; 3082 = "Spanish - Spain"; 3084 = "French - Canada"; 3098 = "Serbian (Cyrillic) - Serbia and Montenegro"; 3131 = "Sami (Northern) - Finland"; 3179 = "Quechua - Peru"; 4097 = "Arabic - Libya"; 4100 = "Chinese - Singapore"; 4103 = "German - Luxembourg"; 4105 = "English - Canada"; 4106 = "Spanish - Guatemala"; 4108 = "French - Switzerland"; 4122 = "Croatian (Latin) - Bosnia and Herzegovina"; 4155 = "Sami (Lule) - Norway"; 4191 = "Central Atlas Tamazight (Tifinagh) - Morocco"; 5121 = "Arabic - Algeria"; 5124 = "Chinese - Macao SAR"; 5127 = "German - Liechtenstein"; 5129 = "English - New Zealand"; 5130 = "Spanish - Costa Rica"; 5132 = "French - Luxembourg"; 5146 = "Bosnian (Latin) - Bosnia and Herzegovina"; 5179 = "Sami (Lule) - Sweden"; 6145 = "Arabic - Morocco"; 6153 = "English - Ireland"; 6154 = "Spanish - Panama"; 6156 = "French - Monaco"; 6170 = "Serbian (Latin) - Bosnia and Herzegovina"; 6203 = "Sami (Southern) - Norway"; 7169 = "Arabic - Tunisia"; 7177 = "English - South Africa"; 7178 = "Spanish - Dominican Republic"; 7194 = "Serbian (Cyrillic) - Bosnia and Herzegovina"; 7227 = "Sami (Southern) - Sweden"; 8193 = "Arabic - Oman"; 8201 = "English - Jamaica"; 8202 = "Spanish - Venezuela"; 8218 = "Bosnian (Cyrillic) - Bosnia and Herzegovina"; 8251 = "Sami (Skolt) - Finland"; 9217 = "Arabic - Yemen"; 9225 = "English - Caribbean"; 9226 = "Spanish - Colombia"; 9242 = "Serbian (Latin) - Serbia"; 9275 = "Sami (Inari) - Finland"; 10241 = "Arabic - Syria"; 10249 = "English - Belize"; 10250 = "Spanish - Peru"; 10266 = "Serbian (Cyrillic) - Serbia"; 11265 = "Arabic - Jordan"; 11273 = "English - Trinidad and Tobago"; 11274 = "Spanish - Argentina"; 11290 = "Serbian (Latin) - Montenegro"; 12289 = "Arabic - Lebanon"; 12297 = "English - Zimbabwe"; 12298 = "Spanish - Ecuador"; 12314 = "Serbian (Cyrillic) - Montenegro"; 13313 = "Arabic - Kuwait"; 13321 = "English - Philippines"; 13322 = "Spanish - Chile"; 14337 = "Arabic - U.A.E."; 14346 = "Spanish - Uruguay"; 15361 = "Arabic - Bahrain"; 15370 = "Spanish - Paraguay"; 16385 = "Arabic - Qatar"; 16393 = "English - India"; 16394 = "Spanish - Bolivia"; 17417 = "English - Malaysia"; 17418 = "Spanish - El Salvador"; 18441 = "English - Singapore"; 18442 = "Spanish - Honduras"; 19466 = "Spanish - Nicaragua"; 20490 = "Spanish - Puerto Rico"; 21514 = "Spanish - United States"; 31748 = "Chinese - Traditional" }
+        # Source: https://msdn.microsoft.com/en-us/library/aa394512(v=vs.85).aspx
+        Switch ($video.CurrentScanMode) {
+            { $_ -lt 1 } { $scan_mode = "" }
+            { $_ -eq 1 } { $scan_mode = "Other" }
+            { $_ -eq 2 } { $scan_mode = "Unknown" }
+            { $_ -eq 3 } { $scan_mode = "Interlaced" }
+            { $_ -eq 4 } { $scan_mode = "Noninterlaced" }
+            { $_ -gt 4 } { $scan_mode = "" }
+        } # switch CurrentScanMode
 
 
-                # CPU
-                $CPUArchitecture_data = $processor.Name
-                If ($CPUArchitecture_data.Contains("(TM)")) {
-                    $CPUArchitecture_data = $CPUArchitecture_data.Replace("(TM)","")
-                    } If ($CPUArchitecture_data.Contains("(R)")) {
-                            $CPUArchitecture_data = $CPUArchitecture_data.Replace("(R)","")
-                } Else {
-                    $continue = $true
-                } # else (CPUArchitecture_data)
+        # Source: https://www.autoitscript.com/autoit3/docs/appendix/OSLangCodes.htm
+        $os_Language = @{ 4 = "Chinese - Simplified"; 1025 = "Arabic - Saudi Arabia"; 1026 = "Bulgarian - Bulgaria"; 1027 = "Catalan - Spain"; 1028 = "Chinese (Traditional) - Taiwan"; 1029 = "Czech - Czech Republic"; 1030 = "Danish - Denmark"; 1031 = "German - Germany"; 1032 = "Greek - Greece"; 1033 = "English - United States"; 1034 = "Spanish - Spain"; 1035 = "Finnish - Finland"; 1036 = "French - France"; 1037 = "Hebrew - Israel"; 1038 = "Hungarian - Hungary"; 1039 = "Icelandic - Iceland"; 1040 = "Italian - Italy"; 1041 = "Japanese - Japan"; 1042 = "Korean - Korea"; 1043 = "Dutch - Netherlands"; 1044 = "Norwegian (Bokmål) - Norway"; 1045 = "Polish - Poland"; 1046 = "Portuguese - Brazil"; 1047 = "Romansh - Switzerland"; 1048 = "Romanian - Romania"; 1049 = "Russian - Russia"; 1050 = "Croatian - Croatia"; 1051 = "Slovak - Slovakia"; 1052 = "Albanian - Albania"; 1053 = "Swedish - Sweden"; 1054 = "Thai - Thailand"; 1055 = "Turkish - Turkey"; 1056 = "Urdu - Pakistan"; 1057 = "Indonesian - Indonesia"; 1058 = "Ukrainian - Ukraine"; 1059 = "Belarusian - Belarus"; 1060 = "Slovenian - Slovenia"; 1061 = "Estonian - Estonia"; 1062 = "Latvian - Latvia"; 1063 = "Lithuanian - Lithuanian"; 1064 = "Tajik (Cyrillic) - Tajikistan"; 1065 = "Persian - Iran"; 1066 = "Vietnamese - Vietnam"; 1067 = "Armenian - Armenia"; 1068 = "Azeri (Latin) - Azerbaijan"; 1069 = "Basque - Basque"; 1070 = "Upper Sorbian - Germany"; 1071 = "Macedonian - Macedonia"; 1074 = "Setswana / Tswana - South Africa"; 1076 = "isiXhosa - South Africa"; 1077 = "isiZulu - South Africa"; 1078 = "Afrikaans - South Africa"; 1079 = "Georgian - Georgia"; 1080 = "Faroese - Faroe Islands"; 1081 = "Hindi - India"; 1082 = "Maltese - Malta"; 1083 = "Sami (Northern) - Norway"; 1086 = "Malay - Malaysia"; 1087 = "Kazakh - Kazakhstan"; 1088 = "Kyrgyz - Kyrgyzstan"; 1089 = "Swahili - Kenya"; 1090 = "Turkmen - Turkmenistan"; 1091 = "Uzbek (Latin) - Uzbekistan"; 1092 = "Tatar - Russia"; 1093 = "Bangla - Bangladesh"; 1094 = "Punjabi - India"; 1095 = "Gujarati - India"; 1096 = "Oriya - India"; 1097 = "Tamil - India"; 1098 = "Telugu - India"; 1099 = "Kannada - India"; 1100 = "Malayalam - India"; 1101 = "Assamese - India"; 1102 = "Marathi - India"; 1103 = "Sanskrit - India"; 1104 = "Mongolian (Cyrillic) - Mongolia"; 1105 = "Tibetan - China"; 1106 = "Welsh - United Kingdom"; 1107 = "Khmer - Cambodia"; 1108 = "Lao - Lao PDR"; 1110 = "Galician - Spain"; 1111 = "Konkani - India"; 1113 = "(reserved) - (reserved)"; 1114 = "Syriac - Syria"; 1115 = "Sinhala - Sri Lanka"; 1116 = "Cherokee - Cherokee"; 1117 = "Inuktitut (Canadian_Syllabics) - Canada"; 1118 = "Amharic - Ethiopia"; 1121 = "Nepali - Nepal"; 1122 = "Frisian - Netherlands"; 1123 = "Pashto - Afghanistan"; 1124 = "Filipino - Philippines"; 1125 = "Divehi - Maldives"; 1128 = "Hausa - Nigeria"; 1130 = "Yoruba - Nigeria"; 1131 = "Quechua - Bolivia"; 1132 = "Sesotho sa Leboa - South Africa"; 1133 = "Bashkir - Russia"; 1134 = "Luxembourgish - Luxembourg"; 1135 = "Greenlandic - Greenland"; 1136 = "Igbo - Nigeria"; 1139 = "Tigrinya - Ethiopia"; 1141 = "Hawiian - United States"; 1144 = "Yi - China"; 1146 = "Mapudungun - Chile"; 1148 = "Mohawk - Canada"; 1150 = "Breton - France"; 1152 = "Uyghur - China"; 1153 = "Maori - New Zealand"; 1154 = "Occitan - France"; 1155 = "Corsican - France"; 1156 = "Alsatian - France"; 1157 = "Sakha - Russia"; 1158 = "K'iche - Guatemala"; 1159 = "Kinyarwanda - Rwanda"; 1160 = "Wolof - Senegal"; 1164 = "Dari - Afghanistan"; 1169 = "Scottish Gaelic - United Kingdom"; 1170 = "Central Kurdish - Iraq"; 2049 = "Arabic - Iraq"; 2051 = "Valencian - Valencia"; 2052 = "Chinese (Simplified) - China"; 2055 = "German - Switzerland"; 2057 = "English - United Kingdom"; 2058 = "Spanish - Mexico"; 2060 = "French - Belgium"; 2064 = "Italian - Switzerland"; 2067 = "Dutch - Belgium"; 2068 = "Norwegian (Nynorsk) - Norway"; 2070 = "Portuguese - Portugal"; 2074 = "Serbian (Latin) - Serbia and Montenegro"; 2077 = "Swedish - Finland"; 2080 = "Urdu - (reserved)"; 2092 = "Azeri (Cyrillic) - Azerbaijan"; 2094 = "Lower Sorbian - Germany"; 2098 = "Setswana / Tswana - Botswana"; 2107 = "Sami (Northern) - Sweden"; 2108 = "Irish - Ireland"; 2110 = "Malay - Brunei Darassalam"; 2115 = "Uzbek (Cyrillic) - Uzbekistan"; 2117 = "Bangla - Bangladesh"; 2118 = "Punjabi - Pakistan"; 2121 = "Tamil - Sri Lanka"; 2128 = "Mongolian (Mong) - Mongolia"; 2137 = "Sindhi - Pakistan"; 2141 = "Inuktitut (Latin) - Canada"; 2143 = "Tamazight (Latin) - Algeria"; 2151 = "Pular - Senegal"; 2155 = "Quechua - Ecuador"; 2163 = "Tigrinya - Eritrea"; 3073 = "Arabic - Egypt"; 3076 = "Chinese - Hong Kong SAR"; 3079 = "German - Austria"; 3081 = "English - Australia"; 3082 = "Spanish - Spain"; 3084 = "French - Canada"; 3098 = "Serbian (Cyrillic) - Serbia and Montenegro"; 3131 = "Sami (Northern) - Finland"; 3179 = "Quechua - Peru"; 4097 = "Arabic - Libya"; 4100 = "Chinese - Singapore"; 4103 = "German - Luxembourg"; 4105 = "English - Canada"; 4106 = "Spanish - Guatemala"; 4108 = "French - Switzerland"; 4122 = "Croatian (Latin) - Bosnia and Herzegovina"; 4155 = "Sami (Lule) - Norway"; 4191 = "Central Atlas Tamazight (Tifinagh) - Morocco"; 5121 = "Arabic - Algeria"; 5124 = "Chinese - Macao SAR"; 5127 = "German - Liechtenstein"; 5129 = "English - New Zealand"; 5130 = "Spanish - Costa Rica"; 5132 = "French - Luxembourg"; 5146 = "Bosnian (Latin) - Bosnia and Herzegovina"; 5179 = "Sami (Lule) - Sweden"; 6145 = "Arabic - Morocco"; 6153 = "English - Ireland"; 6154 = "Spanish - Panama"; 6156 = "French - Monaco"; 6170 = "Serbian (Latin) - Bosnia and Herzegovina"; 6203 = "Sami (Southern) - Norway"; 7169 = "Arabic - Tunisia"; 7177 = "English - South Africa"; 7178 = "Spanish - Dominican Republic"; 7194 = "Serbian (Cyrillic) - Bosnia and Herzegovina"; 7227 = "Sami (Southern) - Sweden"; 8193 = "Arabic - Oman"; 8201 = "English - Jamaica"; 8202 = "Spanish - Venezuela"; 8218 = "Bosnian (Cyrillic) - Bosnia and Herzegovina"; 8251 = "Sami (Skolt) - Finland"; 9217 = "Arabic - Yemen"; 9225 = "English - Caribbean"; 9226 = "Spanish - Colombia"; 9242 = "Serbian (Latin) - Serbia"; 9275 = "Sami (Inari) - Finland"; 10241 = "Arabic - Syria"; 10249 = "English - Belize"; 10250 = "Spanish - Peru"; 10266 = "Serbian (Cyrillic) - Serbia"; 11265 = "Arabic - Jordan"; 11273 = "English - Trinidad and Tobago"; 11274 = "Spanish - Argentina"; 11290 = "Serbian (Latin) - Montenegro"; 12289 = "Arabic - Lebanon"; 12297 = "English - Zimbabwe"; 12298 = "Spanish - Ecuador"; 12314 = "Serbian (Cyrillic) - Montenegro"; 13313 = "Arabic - Kuwait"; 13321 = "English - Philippines"; 13322 = "Spanish - Chile"; 14337 = "Arabic - U.A.E."; 14346 = "Spanish - Uruguay"; 15361 = "Arabic - Bahrain"; 15370 = "Spanish - Paraguay"; 16385 = "Arabic - Qatar"; 16393 = "English - India"; 16394 = "Spanish - Bolivia"; 17417 = "English - Malaysia"; 17418 = "Spanish - El Salvador"; 18441 = "English - Singapore"; 18442 = "Spanish - Honduras"; 19466 = "Spanish - Nicaragua"; 20490 = "Spanish - Puerto Rico"; 21514 = "Spanish - United States"; 31748 = "Chinese - Traditional" }
 
 
-                # Manufacturer
-                $Manufacturer_data = $compsysprod.Vendor
-                If ($Manufacturer_data.Contains("HP")) {
-                    $Manufacturer_data = $Manufacturer_data.Replace("HP","Hewlett-Packard")
-                } Else {
-                    $continue = $true
-                } # else (Manufacturer_data)
+        # CPU
+        $CPUArchitecture_data = $processor.Name
+        If ($CPUArchitecture_data.Contains("(TM)")) {
+            $CPUArchitecture_data = $CPUArchitecture_data.Replace("(TM)", "")
+        } If ($CPUArchitecture_data.Contains("(R)")) {
+            $CPUArchitecture_data = $CPUArchitecture_data.Replace("(R)", "")
+        }
+        Else {
+            $continue = $true
+        } # else (CPUArchitecture_data)
 
 
-                # Operating System
-                $OperatingSystem_data = $os.Caption
-                If ($OperatingSystem_data.Contains(",")) {
-                    $OperatingSystem_data = $OperatingSystem_data.Replace(",","")
-                    } If ($OperatingSystem_data.Contains("(R)")) {
-                            $OperatingSystem_data = $OperatingSystem_data.Replace("(R)","")
-                } Else {
-                    $continue = $true
-                } # else (OperatingSystem_data)
+        # Manufacturer
+        $Manufacturer_data = $compsysprod.Vendor
+        If ($Manufacturer_data.Contains("HP")) {
+            $Manufacturer_data = $Manufacturer_data.Replace("HP", "Hewlett-Packard")
+        }
+        Else {
+            $continue = $true
+        } # else (Manufacturer_data)
 
 
-                        $osinfo += $obj_info = New-Object -TypeName PSCustomObject -Property @{
-                            'Computer'                      = $name
-                            'Manufacturer'                  = $Manufacturer_data
-                            'Computer Model'                = $compsys.Model
-                            'System Type'                   = $compsys.SystemType
-                            'Domain Role'                   = $domain_role
-                            'Product Type'                  = $product_type
-                            'Chassis'                       = $chassis
-                            'PC Type'                       = $pc_type
-                            'Is a Laptop?'                  = $is_a_laptop
-                            'Model Version'                 = $system.SystemSKU
-                            'CPU'                           = $CPUArchitecture_data
-                            'Video Card'                    = (@(ForEach ($videocard in $video) {
-                                                                        If ($videocard.AdapterDACType -ne $null) {
-                                                                            [string]$videocard.Name.Replace('(R)','') + ' (' + $videocard.AdapterDACType + ')'
-                                                                        } Else {
-                                                                            $videocard.Name.Replace('(R)','')
-                                                                        } # else
-                                                                }) | Out-String).Trim()
-                            'Video Card_br'                 = (@(ForEach ($videocard in $video) {
-                                                                        If ($videocard.AdapterDACType -ne $null) {
-                                                                            [string]$videocard.Name.Replace('(R)','') + ' (' + $videocard.AdapterDACType + ')'
-                                                                        } Else {
-                                                                            $videocard.Name.Replace('(R)','')
-                                                                        } # else
-                                                                }) -join '<br />')
-                            'Resolution'                    = (@(ForEach ($videocard in $video) { [string]$videocard.CurrentHorizontalResolution + ' x ' + $videocard.CurrentVerticalResolution + ' @ ' + $videocard.CurrentRefreshRate + ' MHz' + ' (' + $scan_mode + ')' }) | Out-String).Trim()
-                            'Resolution_br'                 = (@(ForEach ($videocard in $video) { [string]$videocard.CurrentHorizontalResolution + ' x ' + $videocard.CurrentVerticalResolution + ' @ ' + $videocard.CurrentRefreshRate + ' MHz' + ' (' + $scan_mode + ')' }) -join '<br />')
-                            'Operating System'              = $OperatingSystem_data
-                            'Architecture'                  = $os.OSArchitecture
-                            'Windows Edition ID'            = If ($registry.EditionID) {$registry.EditionID} Else {" "}
-                            'Windows Installation Type'     = If ($registry.InstallationType) {$registry.InstallationType} Else {" "}
-                            'Windows Platform'              = ([System.Environment]::OSVersion).Platform
-                            'Type'                          = If ($registry.CurrentType) {$registry.CurrentType} Else {" "}
-                            'SP Version'                    = $os.CSDVersion
-                            'Windows BuildLab Extended'     = If ($registry.BuildLabEx) {$registry.BuildLabEx} Else {" "}
-                            'Windows BuildLab'              = If ($registry.BuildLab) {$registry.BuildLab} Else {" "}
-                            'Windows Build Branch'          = If ($registry.BuildBranch) {$registry.BuildBranch} Else {" "}
-                            'Windows Build Number'          = $os.BuildNumber
-                            'Windows Release Id'            = If ($registry.ReleaseId) {$registry.ReleaseId} Else {" "}
-                            'Current Version'               = If ($registry.CurrentVersion) {$registry.CurrentVersion} Else {" "}
-                            'Memory'                        = (ConvertBytes($compsys.TotalPhysicalMemory))
-                            'Video Card Memory'             = (@(ForEach ($videocard in $video) { (ConvertBytes($videocard.AdapterRAM)) }) | Out-String).Trim()
-                            'Video Card Memory_br'          = (@(ForEach ($videocard in $video) { (ConvertBytes($videocard.AdapterRAM)) }) -join '<br />')
-                            'Logical Processors'            = $processor.NumberOfLogicalProcessors
-                            'Cores'                         = $processor.NumberOfCores
-                            'Physical Processors'           = $compsys.NumberOfProcessors
-                            'Country Code'                  = $os.CountryCode
-                            'OS Language'                   = $os_Language[[int]$os.OSLanguage]
-                            'Video Card Driver Date'        = (@(ForEach ($videocard in $video) { ($videocard.ConvertToDateTime($videocard.DriverDate)).ToShortDateString() }) | Out-String).Trim()
-                            'Video Card Driver Date_br'     = (@(ForEach ($videocard in $video) { ($videocard.ConvertToDateTime($videocard.DriverDate)).ToShortDateString() }) -join '<br />')
-                            'BIOS Release Date'             = (Get-Date -year ($system.BIOSReleaseDate.split("/")[-1]) -month ($system.BIOSReleaseDate.split("/")[0]) -day ($system.BIOSReleaseDate.split("/")[1])).ToShortDateString()
-                            'OS Install Date'               = ($os.ConvertToDateTime($os.InstallDate)).ToShortDateString()
-                            'Last BootUp'                   = (($os.ConvertToDateTime($os.LastBootUpTime)).ToShortDateString() + ' ' + ($os.ConvertToDateTime($os.LastBootUpTime)).ToShortTimeString())
-                            'UpTime'                        = (Uptime)
-                            'Date'                          = $date
-                            'Daylight Bias'                 = ((DayLight($timezone.DaylightBias)) + ' (' + $timezone.DaylightName + ')')
-                            'Time Offset (Current)'         = (DayLight($timezone.Bias))
-                            'Time Offset (Normal)'          = (DayLight($os.CurrentTimeZone))
-                            'Time (Current)'                = (Get-Date).ToShortTimeString()
-                            'Time (Normal)'                 = If (((Get-Date).IsDaylightSavingTime()) -eq $true) {
+        # Operating System
+        $OperatingSystem_data = $os.Caption
+        If ($OperatingSystem_data.Contains(",")) {
+            $OperatingSystem_data = $OperatingSystem_data.Replace(",", "")
+        } If ($OperatingSystem_data.Contains("(R)")) {
+            $OperatingSystem_data = $OperatingSystem_data.Replace("(R)", "")
+        }
+        Else {
+            $continue = $true
+        } # else (OperatingSystem_data)
+
+
+        $osinfo += $obj_info = New-Object -TypeName PSCustomObject -Property @{
+            'Computer'                     = $name
+            'Manufacturer'                 = $Manufacturer_data
+            'Computer Model'               = $compsys.Model
+            'System Type'                  = $compsys.SystemType
+            'Domain Role'                  = $domain_role
+            'Product Type'                 = $product_type
+            'Chassis'                      = $chassis
+            'PC Type'                      = $pc_type
+            'Is a Laptop?'                 = $is_a_laptop
+            'Model Version'                = $system.SystemSKU
+            'CPU'                          = $CPUArchitecture_data
+            'Video Card'                   = (@(ForEach ($videocard in $video) {
+                        If ($videocard.AdapterDACType -ne $null) {
+                            [string]$videocard.Name.Replace('(R)', '') + ' (' + $videocard.AdapterDACType + ')'
+                        }
+                        Else {
+                            $videocard.Name.Replace('(R)', '')
+                        } # else
+                    }) | Out-String).Trim()
+            'Video Card_br'                = (@(ForEach ($videocard in $video) {
+                        If ($videocard.AdapterDACType -ne $null) {
+                            [string]$videocard.Name.Replace('(R)', '') + ' (' + $videocard.AdapterDACType + ')'
+                        }
+                        Else {
+                            $videocard.Name.Replace('(R)', '')
+                        } # else
+                    }) -join '<br />')
+            'Resolution'                   = (@(ForEach ($videocard in $video) { [string]$videocard.CurrentHorizontalResolution + ' x ' + $videocard.CurrentVerticalResolution + ' @ ' + $videocard.CurrentRefreshRate + ' MHz' + ' (' + $scan_mode + ')' }) | Out-String).Trim()
+            'Resolution_br'                = (@(ForEach ($videocard in $video) { [string]$videocard.CurrentHorizontalResolution + ' x ' + $videocard.CurrentVerticalResolution + ' @ ' + $videocard.CurrentRefreshRate + ' MHz' + ' (' + $scan_mode + ')' }) -join '<br />')
+            'Operating System'             = $OperatingSystem_data
+            'Architecture'                 = $os.OSArchitecture
+            'Windows Edition ID'           = If ($registry.EditionID) { $registry.EditionID } Else { " " }
+            'Windows Installation Type'    = If ($registry.InstallationType) { $registry.InstallationType } Else { " " }
+            'Windows Platform'             = ([System.Environment]::OSVersion).Platform
+            'Type'                         = If ($registry.CurrentType) { $registry.CurrentType } Else { " " }
+            'SP Version'                   = $os.CSDVersion
+            'Windows BuildLab Extended'    = If ($registry.BuildLabEx) { $registry.BuildLabEx } Else { " " }
+            'Windows BuildLab'             = If ($registry.BuildLab) { $registry.BuildLab } Else { " " }
+            'Windows Build Branch'         = If ($registry.BuildBranch) { $registry.BuildBranch } Else { " " }
+            'Windows Build Number'         = $os.BuildNumber
+            'Windows Release Id'           = If ($registry.ReleaseId) { $registry.ReleaseId } Else { " " }
+            'Current Version'              = If ($registry.CurrentVersion) { $registry.CurrentVersion } Else { " " }
+            'Memory'                       = (ConvertBytes($compsys.TotalPhysicalMemory))
+            'Video Card Memory'            = (@(ForEach ($videocard in $video) { (ConvertBytes($videocard.AdapterRAM)) }) | Out-String).Trim()
+            'Video Card Memory_br'         = (@(ForEach ($videocard in $video) { (ConvertBytes($videocard.AdapterRAM)) }) -join '<br />')
+            'Logical Processors'           = $processor.NumberOfLogicalProcessors
+            'Cores'                        = $processor.NumberOfCores
+            'Physical Processors'          = $compsys.NumberOfProcessors
+            'Country Code'                 = $os.CountryCode
+            'OS Language'                  = $os_Language[[int]$os.OSLanguage]
+            'Video Card Driver Date'       = (@(ForEach ($videocard in $video) { ($videocard.ConvertToDateTime($videocard.DriverDate)).ToShortDateString() }) | Out-String).Trim()
+            'Video Card Driver Date_br'    = (@(ForEach ($videocard in $video) { ($videocard.ConvertToDateTime($videocard.DriverDate)).ToShortDateString() }) -join '<br />')
+            'BIOS Release Date'            = (Get-Date -year ($system.BIOSReleaseDate.split("/")[-1]) -month ($system.BIOSReleaseDate.split("/")[0]) -day ($system.BIOSReleaseDate.split("/")[1])).ToShortDateString()
+            'OS Install Date'              = ($os.ConvertToDateTime($os.InstallDate)).ToShortDateString()
+            'Last BootUp'                  = (($os.ConvertToDateTime($os.LastBootUpTime)).ToShortDateString() + ' ' + ($os.ConvertToDateTime($os.LastBootUpTime)).ToShortTimeString())
+            'UpTime'                       = (Uptime)
+            'Date'                         = $date
+            'Daylight Bias'                = ((DayLight($timezone.DaylightBias)) + ' (' + $timezone.DaylightName + ')')
+            'Time Offset (Current)'        = (DayLight($timezone.Bias))
+            'Time Offset (Normal)'         = (DayLight($os.CurrentTimeZone))
+            'Time (Current)'               = (Get-Date).ToShortTimeString()
+            'Time (Normal)'                = If (((Get-Date).IsDaylightSavingTime()) -eq $true) {
                                                                     (((Get-Date).AddMinutes($timezone.DaylightBias)).ToShortTimeString() + ' (' + $timezone.StandardName + ')')
-                                                                } ElseIf (((Get-Date).IsDaylightSavingTime()) -eq $false) {
+            }
+            ElseIf (((Get-Date).IsDaylightSavingTime()) -eq $false) {
                                                                     (Get-Date).ToShortTimeString() + ' (' + $timezone.StandardName + ')'
-                                                                } Else {
-                                                                    $continue = $true
-                                                                } # else
-                            'Daylight In Effect'            = $compsys.DaylightInEffect
-                        #  'Daylight In Effect'            = (Get-Date).IsDaylightSavingTime()
-                            'Time Zone'                     = $timezone.Description
-                            'Connectivity'                  = (@(ForEach ($adapter in $ethernet) {
-                                                                        If ($adapter.NetConnectionID -ne $null) {
-                                                                            [string]$adapter.ProductName.Replace('(R)','') + ' (' + $adapter.NetConnectionID + ')'
-                                                                        } Else {
-                                                                            [string]$adapter.ProductName.Replace('(R)','')
-                                                                        } # else
-                                                                }) | Out-String).Trim()
-                            'Connectivity_br'               = (@(ForEach ($adapter in $ethernet) {
-                                                                        If ($adapter.NetConnectionID -ne $null) {
-                                                                            [string]$adapter.ProductName.Replace('(R)','') + ' (' + $adapter.NetConnectionID + ')'
-                                                                        } Else {
-                                                                            [string]$adapter.ProductName.Replace('(R)','')
-                                                                        } # else
-                                                                }) -join '<br />')
-                            'Mobile Broadband'              = (@(ForEach ($modem in $mobilebroadband) { [string]$modem.Name + ' (' + $modem.AttachedTo + ')'}) | Out-String).Trim()
-                            'Mobile Broadband_br'           = (@(ForEach ($modem in $mobilebroadband) { [string]$modem.Name + ' (' + $modem.AttachedTo + ')'}) -join '<br />')
-                            'OS Version'                    = $os.Version
-                            'PowerShell Version'            = [string]$powershell.Major + '.' + $powershell.Minor + '.' + $powershell.Build + '.' +  $powershell.Revision
-                            'BIOS Version'                  = $bios.SMBIOSBIOSVersion
-                            'Mother Board Version'          = $system.BaseBoardVersion
-                            'Video Card Version'            = (@(ForEach ($videocard in $video) { $videocard.DriverVersion }) | Out-String).Trim()
-                            'Video Card Version_br'         = (@(ForEach ($videocard in $video) { $videocard.DriverVersion }) -join '<br />')
-                            'ID'                            = $compsysprod.IdentifyingNumber
-                            'Serial Number (BIOS)'          = $bios.SerialNumber
-                            'Serial Number (Mother Board)'  = $motherboard.SerialNumber
-                            'Serial Number (OS)'            = $os.SerialNumber
-                            'UUID'                          = $compsysprod.UUID
-                        } # New-Object
+            }
+            Else {
+                $continue = $true
+            } # else
+            'Daylight In Effect'           = $compsys.DaylightInEffect
+            #  'Daylight In Effect'            = (Get-Date).IsDaylightSavingTime()
+            'Time Zone'                    = $timezone.Description
+            'Connectivity'                 = (@(ForEach ($adapter in $ethernet) {
+                        If ($adapter.NetConnectionID -ne $null) {
+                            [string]$adapter.ProductName.Replace('(R)', '') + ' (' + $adapter.NetConnectionID + ')'
+                        }
+                        Else {
+                            [string]$adapter.ProductName.Replace('(R)', '')
+                        } # else
+                    }) | Out-String).Trim()
+            'Connectivity_br'              = (@(ForEach ($adapter in $ethernet) {
+                        If ($adapter.NetConnectionID -ne $null) {
+                            [string]$adapter.ProductName.Replace('(R)', '') + ' (' + $adapter.NetConnectionID + ')'
+                        }
+                        Else {
+                            [string]$adapter.ProductName.Replace('(R)', '')
+                        } # else
+                    }) -join '<br />')
+            'Mobile Broadband'             = (@(ForEach ($modem in $mobilebroadband) { [string]$modem.Name + ' (' + $modem.AttachedTo + ')' }) | Out-String).Trim()
+            'Mobile Broadband_br'          = (@(ForEach ($modem in $mobilebroadband) { [string]$modem.Name + ' (' + $modem.AttachedTo + ')' }) -join '<br />')
+            'OS Version'                   = $os.Version
+            'PowerShell Version'           = [string]$powershell.Major + '.' + $powershell.Minor + '.' + $powershell.Build + '.' + $powershell.Revision
+            'BIOS Version'                 = $bios.SMBIOSBIOSVersion
+            'Mother Board Version'         = $system.BaseBoardVersion
+            'Video Card Version'           = (@(ForEach ($videocard in $video) { $videocard.DriverVersion }) | Out-String).Trim()
+            'Video Card Version_br'        = (@(ForEach ($videocard in $video) { $videocard.DriverVersion }) -join '<br />')
+            'ID'                           = $compsysprod.IdentifyingNumber
+            'Serial Number (BIOS)'         = $bios.SerialNumber
+            'Serial Number (Mother Board)' = $motherboard.SerialNumber
+            'Serial Number (OS)'           = $os.SerialNumber
+            'UUID'                         = $compsysprod.UUID
+        } # New-Object
 
 
 
 
-                    # Display OS Info in console
-                    $obj_osinfo_selection = $osinfo | Select-Object 'Computer','Manufacturer','Computer Model','System Type','Domain Role','Product Type','Chassis','PC Type','Is a Laptop?','Model Version','CPU','Video Card','Resolution','Operating System','Architecture','Windows Edition ID','Windows Installation Type','Windows Platform','Type','SP Version','Windows BuildLab Extended','Windows BuildLab','Windows Build Branch','Windows Build Number','Windows Release Id','Current Version','Memory','Video Card Memory','Logical Processors','Cores','Physical Processors','Country Code','OS Language','Video Card Driver Date','BIOS Release Date','OS Install Date','Last BootUp','UpTime','Date','Daylight Bias','Time Offset (Current)','Time Offset (Normal)','Time (Current)','Time (Normal)','Daylight In Effect','Time Zone','Connectivity','Mobile Broadband','OS Version','PowerShell Version','Video Card Version','BIOS Version','Mother Board Version','Serial Number (BIOS)','Serial Number (Mother Board)','Serial Number (OS)','UUID'
-                    $obj_osinfo_selection.PSObject.TypeNames.Insert(0,"OSInfo")
-                    Write-Output $obj_osinfo_selection
-                    $empty_line | Out-String
-                    $empty_line | Out-String
+        # Display OS Info in console
+        $obj_osinfo_selection = $osinfo | Select-Object 'Computer', 'Manufacturer', 'Computer Model', 'System Type', 'Domain Role', 'Product Type', 'Chassis', 'PC Type', 'Is a Laptop?', 'Model Version', 'CPU', 'Video Card', 'Resolution', 'Operating System', 'Architecture', 'Windows Edition ID', 'Windows Installation Type', 'Windows Platform', 'Type', 'SP Version', 'Windows BuildLab Extended', 'Windows BuildLab', 'Windows Build Branch', 'Windows Build Number', 'Windows Release Id', 'Current Version', 'Memory', 'Video Card Memory', 'Logical Processors', 'Cores', 'Physical Processors', 'Country Code', 'OS Language', 'Video Card Driver Date', 'BIOS Release Date', 'OS Install Date', 'Last BootUp', 'UpTime', 'Date', 'Daylight Bias', 'Time Offset (Current)', 'Time Offset (Normal)', 'Time (Current)', 'Time (Normal)', 'Daylight In Effect', 'Time Zone', 'Connectivity', 'Mobile Broadband', 'OS Version', 'PowerShell Version', 'Video Card Version', 'BIOS Version', 'Mother Board Version', 'Serial Number (BIOS)', 'Serial Number (Mother Board)', 'Serial Number (OS)', 'UUID'
+        $obj_osinfo_selection.PSObject.TypeNames.Insert(0, "OSInfo")
+        Write-Output $obj_osinfo_selection
+        $empty_line | Out-String
+        $empty_line | Out-String
 
 
 
@@ -587,42 +616,44 @@ Process {
         # Retrieve additional disk information from volumes (Win32_Volume)
         $volumes_query = Get-WmiObject -class Win32_Volume -ComputerName $name
 
-                ForEach ($volume in $volumes_query) {
-                    $volumes += $obj_volumes = New-Object -TypeName PSCustomObject -Property @{
-                            'Automount'             = $volume.Automount
-                            'Block Size'            = $volume.BlockSize
-                            'Boot Volume'           = $volume.BootVolume
-                            'Compressed'            = $volume.Compressed
-                            'Computer'              = $volume.SystemName
-                            'DeviceID'              = $volume.DeviceID
-                            'Drive'                 = $volume.DriveLetter
-                            'DriveType'             = $volume.DriveType
-                            'File System'           = $volume.FileSystem
-                            'Free Space'            = (ConvertBytes($volume.FreeSpace))
-                            'Free (%)'              = $free_percentage = If ($volume.Capacity -gt 0) {
-                                                            $relative_free = [Math]::Round((($volume.FreeSpace / $volume.Capacity) * 100 ), 1)
-                                                                [string]$relative_free + ' %'
-                                                            } Else {
-                                                                [string]''
-                                                        } # else (if)
-                            'Indexing Enabled'      = $volume.IndexingEnabled
-                            'Label'                 = $volume.Label
-                            'PageFile Present'      = $volume.PageFilePresent
-                            'Root'                  = $volume.Name
-                            'Serial Number (Volume)' = $volume.DeviceID
-                            'Source'                = $volume.__CLASS
-                            'System Volume'         = $volume.SystemVolume
-                            'Total Size'            = (ConvertBytes($volume.Capacity))
-                            'Used'                  = (ConvertBytes($volume.Capacity - $volume.FreeSpace))
-                            'Used (%)'              = $used_percentage = If ($volume.Capacity -gt 0) {
-                                                            $relative_size = [Math]::Round(((($volume.Capacity - $volume.FreeSpace) / $volume.Capacity) * 100 ), 1)
-                                                                [string]$relative_size + ' %'
-                                                            } Else {
-                                                                [string]''
-                                                        } # else (if)
-                        } # New-Object
+        ForEach ($volume in $volumes_query) {
+            $volumes += $obj_volumes = New-Object -TypeName PSCustomObject -Property @{
+                'Automount'              = $volume.Automount
+                'Block Size'             = $volume.BlockSize
+                'Boot Volume'            = $volume.BootVolume
+                'Compressed'             = $volume.Compressed
+                'Computer'               = $volume.SystemName
+                'DeviceID'               = $volume.DeviceID
+                'Drive'                  = $volume.DriveLetter
+                'DriveType'              = $volume.DriveType
+                'File System'            = $volume.FileSystem
+                'Free Space'             = (ConvertBytes($volume.FreeSpace))
+                'Free (%)'               = $free_percentage = If ($volume.Capacity -gt 0) {
+                    $relative_free = [Math]::Round((($volume.FreeSpace / $volume.Capacity) * 100 ), 1)
+                    [string]$relative_free + ' %'
+                }
+                Else {
+                    [string]''
+                } # else (if)
+                'Indexing Enabled'       = $volume.IndexingEnabled
+                'Label'                  = $volume.Label
+                'PageFile Present'       = $volume.PageFilePresent
+                'Root'                   = $volume.Name
+                'Serial Number (Volume)' = $volume.DeviceID
+                'Source'                 = $volume.__CLASS
+                'System Volume'          = $volume.SystemVolume
+                'Total Size'             = (ConvertBytes($volume.Capacity))
+                'Used'                   = (ConvertBytes($volume.Capacity - $volume.FreeSpace))
+                'Used (%)'               = $used_percentage = If ($volume.Capacity -gt 0) {
+                    $relative_size = [Math]::Round(((($volume.Capacity - $volume.FreeSpace) / $volume.Capacity) * 100 ), 1)
+                    [string]$relative_size + ' %'
+                }
+                Else {
+                    [string]''
+                } # else (if)
+            } # New-Object
 
-                } # ForEach ($volume}
+        } # ForEach ($volume}
     } # ForEach ($name/first)
 
 
@@ -736,7 +767,7 @@ Process {
         </tr>
         <tr>
             <th>Computer:</th>
-            <td>" + $host_name  + "</td>
+            <td>" + $host_name + "</td>
         </tr>
         <tr>
             <th>Manufacturer:</th>
@@ -998,130 +1029,144 @@ Process {
         # Increment the step counter
         $task_number++
 
-                        # Update the progress bar if there is more than one unique computer to process or any swithes were activated
-                        If ($threshold -ge 2) {
-                            $computer_no = ($task_number - $name_count)
-                            $activity = "Retrieving a Partition Table $task_number/$activities"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $name -PercentComplete (($task_number / $total_steps) * 100)
-                        } # If ($threshold)
+        # Update the progress bar if there is more than one unique computer to process or any swithes were activated
+        If ($threshold -ge 2) {
+            $computer_no = ($task_number - $name_count)
+            $activity = "Retrieving a Partition Table $task_number/$activities"
+            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $name -PercentComplete (($task_number / $total_steps) * 100)
+        } # If ($threshold)
 
         $disks = Get-WmiObject -class Win32_DiskDrive -ComputerName $name
 
         ForEach ($disk in $disks) {
 
-                # $partitions = Get-WmiObject -class Win32_DiskPartition -ComputerName $name
-                # $partitions = (Get-WmiObject -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='\\.\PHYSICALDRIVE0'} WHERE AssocClass=Win32_DiskDriveToDiskPartition")
-                # $partitions = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='\\.\PHYSICALDRIVE0'} WHERE ResultRole=Dependent")
-                $partitions = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='$($disk.DeviceID)'} WHERE ResultRole=Dependent")
+            # $partitions = Get-WmiObject -class Win32_DiskPartition -ComputerName $name
+            # $partitions = (Get-WmiObject -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='\\.\PHYSICALDRIVE0'} WHERE AssocClass=Win32_DiskDriveToDiskPartition")
+            # $partitions = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='\\.\PHYSICALDRIVE0'} WHERE ResultRole=Dependent")
+            $partitions = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskDrive.DeviceID='$($disk.DeviceID)'} WHERE ResultRole=Dependent")
 
-                ForEach ($partition in ($partitions)) {
+            ForEach ($partition in ($partitions)) {
 
-                        # $drives = Get-WmiObject -class Win32_LogicalDisk -ComputerName $name
-                        # $drives = Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='Disk #0, Partition #1'} WHERE ResultRole=Dependent"
-                        $drives = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='$($partition.DeviceID)'} WHERE AssocClass=Win32_LogicalDiskToPartition")
+                # $drives = Get-WmiObject -class Win32_LogicalDisk -ComputerName $name
+                # $drives = Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='Disk #0, Partition #1'} WHERE ResultRole=Dependent"
+                $drives = (Get-WmiObject -ComputerName $name -Query "ASSOCIATORS OF {Win32_DiskPartition.DeviceID='$($partition.DeviceID)'} WHERE AssocClass=Win32_LogicalDiskToPartition")
 
-                        ForEach ($drive in ($drives)) {
+                ForEach ($drive in ($drives)) {
 
-                                $free_percentage = If ($drive.Size -gt 0) {
-                                                        $relative_free = [Math]::Round((($drive.FreeSpace / $drive.Size) * 100 ), 1)
-                                                            [string]$relative_free + ' %'
-                                                        } Else {
-                                                            [string]''
-                                                        } # else (if)
+                    $free_percentage = If ($drive.Size -gt 0) {
+                        $relative_free = [Math]::Round((($drive.FreeSpace / $drive.Size) * 100 ), 1)
+                        [string]$relative_free + ' %'
+                    }
+                    Else {
+                        [string]''
+                    } # else (if)
 
-                                $used_percentage = If ($drive.Size -gt 0) {
-                                                        $relative_size = [Math]::Round(((($drive.Size - $drive.FreeSpace) / $drive.Size) * 100 ), 1)
-                                                            [string]$relative_size + ' %'
-                                                        } Else {
-                                                            [string]''
-                                                        } # else (if)
+                    $used_percentage = If ($drive.Size -gt 0) {
+                        $relative_size = [Math]::Round(((($drive.Size - $drive.FreeSpace) / $drive.Size) * 100 ), 1)
+                        [string]$relative_size + ' %'
+                    }
+                    Else {
+                        [string]''
+                    } # else (if)
 
-                                $disk_status = ""
-                                    If ($used_percentage -eq 100) {
-                                        $disk_status = "Full"
-                                    } ElseIf ($used_percentage -ge 95) {
-                                        $disk_status = "Very Low Space"
-                                    } ElseIf ($used_percentage -ge 90) {
-                                        $disk_status = "Low Space"
-                                    } ElseIf ($used_percentage -ge 85) {
-                                        $disk_status = "Medium Space"
-                                    } ElseIf ($used_percentage -gt 0) {
-                                        $disk_status = "OK"
-                                    } Else {
-                                        $disk_status = ""
-                                    } # else (if)
+                    $disk_status = ""
+                    If ($used_percentage -eq 100) {
+                        $disk_status = "Full"
+                    }
+                    ElseIf ($used_percentage -ge 95) {
+                        $disk_status = "Very Low Space"
+                    }
+                    ElseIf ($used_percentage -ge 90) {
+                        $disk_status = "Low Space"
+                    }
+                    ElseIf ($used_percentage -ge 85) {
+                        $disk_status = "Medium Space"
+                    }
+                    ElseIf ($used_percentage -gt 0) {
+                        $disk_status = "OK"
+                    }
+                    Else {
+                        $disk_status = ""
+                    } # else (if)
 
-                                $space_color = ""
-                                $free_space = $drive.FreeSpace
-                                If ((ConvertBytes($drive.Size)) -eq '0 KB') {
-                                    $space_color = ""
-                                } ElseIf ($free_space -lt 1073741824) {
-                                    $space_color = $very_low_space
-                                } ElseIf ($free_space -lt 5368709120) {
-                                    $space_color = $low_space
-                                } ElseIf ($free_space -lt 10737418240) {
-                                    $space_color = $medium_space
-                                } # ElseIf (previous/second/last)
+                    $space_color = ""
+                    $free_space = $drive.FreeSpace
+                    If ((ConvertBytes($drive.Size)) -eq '0 KB') {
+                        $space_color = ""
+                    }
+                    ElseIf ($free_space -lt 1073741824) {
+                        $space_color = $very_low_space
+                    }
+                    ElseIf ($free_space -lt 5368709120) {
+                        $space_color = $low_space
+                    }
+                    ElseIf ($free_space -lt 10737418240) {
+                        $space_color = $medium_space
+                    } # ElseIf (previous/second/last)
 
-                                $percentage_color = ""
-                                $free_percent = If ($drive.Size -gt 0) {
-                                                    [Math]::Round((($drive.FreeSpace / $drive.Size) * 100 ), 1)
-                                                    } Else {
-                                                        [string]''
-                                                    } # else (if)
-                                If ($free_percent -eq '') {
-                                    $percentage_color = ""
-                                } ElseIf ($free_percent -lt 5) {
-                                    $percentage_color = $very_low_space
-                                } ElseIf ($free_percent -lt 10) {
-                                    $percentage_color = $low_space
-                                } ElseIf ($free_percent -lt 15) {
-                                    $percentage_color = $medium_space
-                                } # ElseIf (previous/second/last)
-
-
-
-
-                                    $partition_table += $obj_partition = New-Object -Type PSCustomObject -Property @{
-
-                                        'Definition'              = $disk.Description
-                                        'Disk'                    = $disk.DeviceID
-                                        'Disk Capabilities'       = $disk.CapabilityDescriptions
-                                        'Disk Status'             = $disk.Status
-                                        'Interface'               = $disk.InterfaceType
-                                        'Media Type'              = $disk.MediaType
-                                        'Model'                   = $disk.Model
-                                        'Serial Number (Disk)'    = $disk.SerialNumber
-
-
-                                        'Boot Partition'          = $partition.BootPartition
-                                        'Bootable'                = $partition.Bootable
-                                        'Computer'                = $partition.SystemName
-                                        'Partition'               = $partition.DeviceID
-                                        'Partition Type'          = $partition.Description
-                                        'Primary Partition'       = $partition.PrimaryPartition
+                    $percentage_color = ""
+                    $free_percent = If ($drive.Size -gt 0) {
+                        [Math]::Round((($drive.FreeSpace / $drive.Size) * 100 ), 1)
+                    }
+                    Else {
+                        [string]''
+                    } # else (if)
+                    If ($free_percent -eq '') {
+                        $percentage_color = ""
+                    }
+                    ElseIf ($free_percent -lt 5) {
+                        $percentage_color = $very_low_space
+                    }
+                    ElseIf ($free_percent -lt 10) {
+                        $percentage_color = $low_space
+                    }
+                    ElseIf ($free_percent -lt 15) {
+                        $percentage_color = $medium_space
+                    } # ElseIf (previous/second/last)
 
 
-                                    #  'Computer'                = $drive.SystemName
-                                        'Compressed'              = $drive.Compressed
-                                        'Description'             = $drive.Description
-                                        'Drive'                   = $drive.DeviceID
-                                        'File System'             = $drive.FileSystem
-                                        'Free Space'              = (ConvertBytes($drive.FreeSpace))
-                                        'Free (%)'                = $free_percentage
-                                        'Label'                   = $drive.VolumeName
-                                        'Free Space Status'       = $disk_status
-                                        'Total Size'              = (ConvertBytes($drive.Size))
-                                        'Used'                    = (ConvertBytes($drive.Size - $drive.FreeSpace))
-                                        'Used (%)'                = $used_percentage
-                                        'Serial Number (Volume)'  = $drive.VolumeSerialNumber
-
-                                        } # New-Object
 
 
-                                    # Write the bulk of the main table in the HTML-file
-                                    # Please notice that the main table is not closed after this step.
-                                    Add-Content $html_file -Value ('    <tr>
+                    $partition_table += $obj_partition = New-Object -Type PSCustomObject -Property @{
+
+                        'Definition'             = $disk.Description
+                        'Disk'                   = $disk.DeviceID
+                        'Disk Capabilities'      = $disk.CapabilityDescriptions
+                        'Disk Status'            = $disk.Status
+                        'Interface'              = $disk.InterfaceType
+                        'Media Type'             = $disk.MediaType
+                        'Model'                  = $disk.Model
+                        'Serial Number (Disk)'   = $disk.SerialNumber
+
+
+                        'Boot Partition'         = $partition.BootPartition
+                        'Bootable'               = $partition.Bootable
+                        'Computer'               = $partition.SystemName
+                        'Partition'              = $partition.DeviceID
+                        'Partition Type'         = $partition.Description
+                        'Primary Partition'      = $partition.PrimaryPartition
+
+
+                        #  'Computer'                = $drive.SystemName
+                        'Compressed'             = $drive.Compressed
+                        'Description'            = $drive.Description
+                        'Drive'                  = $drive.DeviceID
+                        'File System'            = $drive.FileSystem
+                        'Free Space'             = (ConvertBytes($drive.FreeSpace))
+                        'Free (%)'               = $free_percentage
+                        'Label'                  = $drive.VolumeName
+                        'Free Space Status'      = $disk_status
+                        'Total Size'             = (ConvertBytes($drive.Size))
+                        'Used'                   = (ConvertBytes($drive.Size - $drive.FreeSpace))
+                        'Used (%)'               = $used_percentage
+                        'Serial Number (Volume)' = $drive.VolumeSerialNumber
+
+                    } # New-Object
+
+
+                    # Write the bulk of the main table in the HTML-file
+                    # Please notice that the main table is not closed after this step.
+                    Add-Content $html_file -Value ('    <tr>
             <td class="data">' + $partition.SystemName + '</td>
             <td class="data">' + $drive.DeviceID + '</td>
             <td class="data">' + $drive.VolumeName + '</td>
@@ -1139,8 +1184,8 @@ Process {
             <td class="data" bgcolor="' + $percentage_color + '">' + $free_percentage + '</td>
         </tr>')
 
-                        } # ForEach ($drive)
-                } # ForEach ($partition)
+                } # ForEach ($drive)
+            } # ForEach ($partition)
         } # ForEach ($disk)
     } # ForEach ($name/second)
 
@@ -1175,7 +1220,7 @@ Process {
         </tr>
         <tr>
             <th>Computer:</th>
-            <td>' + $host_name  + '</td>
+            <td>' + $host_name + '</td>
         </tr>
     </table>
 
@@ -1193,15 +1238,15 @@ Process {
 End {
 
     # Process the partition table
-    $partition_table.PSObject.TypeNames.Insert(0,"PartitionTable")
-    $partition_table_selection = $partition_table | Sort Computer,Drive | Select-Object Computer,Drive,Label,'File System','Boot Partition',Interface,'Media Type','Partition Type',Partition,Used,'Used (%)','Free Space Status','Total Size','Free Space','Free (%)'
-    $partition_table_selection_screen = $partition_table | Sort Computer,Drive | Select-Object Computer,Drive,Label,Interface,'Media Type',Partition,'Used (%)','Total Size','Free Space','Free (%)'
+    $partition_table.PSObject.TypeNames.Insert(0, "PartitionTable")
+    $partition_table_selection = $partition_table | Sort Computer, Drive | Select-Object Computer, Drive, Label, 'File System', 'Boot Partition', Interface, 'Media Type', 'Partition Type', Partition, Used, 'Used (%)', 'Free Space Status', 'Total Size', 'Free Space', 'Free (%)'
+    $partition_table_selection_screen = $partition_table | Sort Computer, Drive | Select-Object Computer, Drive, Label, Interface, 'Media Type', Partition, 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
 
 
     # Display the volumes in console
-    $volumes.PSObject.TypeNames.Insert(0,"Volume")
-    $volumes_selection = $volumes | Sort Computer,Drive | Select-Object 'Computer','Drive','Label','File System','System Volume','Boot Volume','Indexing Enabled','PageFile Present','Block Size','Compressed','Automount','Used','Used (%)','Total Size','Free Space','Free (%)'
-    $volumes_selection_screen = $volumes | Sort Computer,Drive | Select-Object 'Computer','Drive','Label','File System','System Volume','Used','Used (%)','Total Size','Free Space','Free (%)'
+    $volumes.PSObject.TypeNames.Insert(0, "Volume")
+    $volumes_selection = $volumes | Sort Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Boot Volume', 'Indexing Enabled', 'PageFile Present', 'Block Size', 'Compressed', 'Automount', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
+    $volumes_selection_screen = $volumes | Sort Computer, Drive | Select-Object 'Computer', 'Drive', 'Label', 'File System', 'System Volume', 'Used', 'Used (%)', 'Total Size', 'Free Space', 'Free (%)'
     $volumes_header = "Volumes"
     $volumes_coline = "-------"
     Write-Output $volumes_header
@@ -1221,7 +1266,7 @@ End {
 
 
 
-<#
+    <#
    _____         _ _       _
   / ____|       (_) |     | |
  | (_____      ___| |_ ___| |__   ___  ___
@@ -1233,9 +1278,9 @@ End {
  Switches
 
 #>
-# Source: https://technet.microsoft.com/en-us/library/ee692804.aspx
-# Source: http://stackoverflow.com/questions/27175137/powershellv2-remove-last-x-characters-from-a-string#32608908
-If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $real_output_path -replace ".{1}$" }
+    # Source: https://technet.microsoft.com/en-us/library/ee692804.aspx
+    # Source: http://stackoverflow.com/questions/27175137/powershellv2-remove-last-x-characters-from-a-string#32608908
+    If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $real_output_path -replace ".{1}$" }
 
 
     # (1) SystemInfo.exe
@@ -1244,25 +1289,27 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
     # Source: https://technet.microsoft.com/en-us/library/bb491007.aspx
     # Systeminfo.exe /fo CSV | ConvertFrom-Csv | Export-Csv "system_info.csv" -Delimiter ';' -NoTypeInformation -Encoding UTF8
 
-        If ($SystemInfo) {
+    If ($SystemInfo) {
 
-            # Increment the counters
-            $task_number++
-            $switch_count++
-            $system_info_txt = "$real_output_path\system_info.txt"
+        # Increment the counters
+        $task_number++
+        $switch_count++
+        $system_info_txt = "$real_output_path\system_info.txt"
 
-                            # Update the progress bar
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $task = "systeminfo.exe /fo LIST | Out-File '$system_info_txt' -Encoding UTF8"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
+        # Update the progress bar
+        $activity = "Processing Additional Options $task_number/$activities"
+        $task = "systeminfo.exe /fo LIST | Out-File '$system_info_txt' -Encoding UTF8"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
 
-                Try {
-                    $system_info = systeminfo.exe /fo LIST | Out-File "$system_info_txt" -Encoding UTF8
-                } Catch { Write-Debug $_.Exception }
+        Try {
+            $system_info = systeminfo.exe /fo LIST | Out-File "$system_info_txt" -Encoding UTF8
+        }
+        Catch { Write-Debug $_.Exception }
 
-        } Else {
-            $continue = $true
-        } # Else
+    }
+    Else {
+        $continue = $true
+    } # Else
 
 
     # (2) MsInfo32.exe report
@@ -1273,131 +1320,144 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
     # Source: https://support.microsoft.com/en-us/help/300887/how-to-use-system-information-msinfo32-command-line-tool-switches
 
 
-        If ($Extract) {
+    If ($Extract) {
 
-            # Increment the counters
-            $task_number++
-            $switch_count++
-            $ms_info_txt = "$real_output_path\ms_info.txt"
-            $ms_info_nfo = "$real_output_path\ms_info.nfo"
+        # Increment the counters
+        $task_number++
+        $switch_count++
+        $ms_info_txt = "$real_output_path\ms_info.txt"
+        $ms_info_nfo = "$real_output_path\ms_info.nfo"
 
-                                    # Close all msinfo32 instances
-                                    # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
-                                    $msinfo32_process = Get-Process msinfo32 -ErrorAction SilentlyContinue
+        # Close all msinfo32 instances
+        # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
+        $msinfo32_process = Get-Process msinfo32 -ErrorAction SilentlyContinue
 
-                                    If ($msinfo32_process) {
+        If ($msinfo32_process) {
 
-                                        # Try gracefully first
-                                        $msinfo32_process.CloseMainWindow()
-                                        Start-Sleep -Seconds 3
+            # Try gracefully first
+            $msinfo32_process.CloseMainWindow()
+            Start-Sleep -Seconds 3
 
-                                            # Close msinfo32
-                                            If ( -not $msinfo32_process.HasExited) {
-                                                $msinfo32_process | Stop-Process -Force
-                                            } Else {
-                                                $continue = $true
-                                            } # Else (If -not)
-                                    } Else {
-                                        $continue = $true
-                                    } # Else (If $msinfo32_process)
-
-                            # Update the progress bar and start a timer
-                            # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
-                            $timer = [System.Diagnostics.Stopwatch]::StartNew()
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $script = "& msinfo32.exe /categories +systemsummary /report '$ms_info_txt'"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $script -PercentComplete (($task_number / $total_steps) * 100)
-                            $empty_line | Out-String
-                            Write-Verbose "Please hold on, the ms_info.txt file creation probably runs well over a minute..." -verbose
-            Try {
-                # .txt file
-                If ($PSVersionTable.PSVersion -ge 5.1) {
-                    & msinfo32.exe /categories +systemsummary /report "$ms_info_txt"
-                } Else {
-                    & msinfo32.exe /categories +systemsummary /report "$ms_info_txt" | Out-Null
-                } # Else (If $PSVersionTable.PSVersion)
-            } Catch { Write-Debug $_.Exception }
-
-                            do {    $processes = Get-Process
-                                    $time_elapsed = $timer.Elapsed
-
-                                    # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
-                                    Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("$script | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
-                                    Start-Sleep -Seconds 1
-                            }
-                            while  ( $processes.Name -contains 'msinfo32' )
-
-            # Increment the counters
-            $task_number++
-            $switch_count++
-                                    # Close all msinfo32 instances
-                                    # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
-                                    $msinfo32_process = Get-Process msinfo32 -ErrorAction SilentlyContinue
-
-                                    If ($msinfo32_process) {
-
-                                        # Try gracefully first
-                                        $msinfo32_process.CloseMainWindow()
-                                        Start-Sleep -Seconds 3
-
-                                            # Close msinfo32
-                                            If ( -not $msinfo32_process.HasExited) {
-                                                $msinfo32_process | Stop-Process -Force
-                                            } Else {
-                                                $continue = $true
-                                            } # Else (If -not)
-                                    } Else {
-                                        $continue = $true
-                                    } # Else (If $msinfo32_process)
-
-                            # Update the progress bar
-                            $timer.Stop()
-                            $timer.Reset()
-                            $timer.Start()
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $script = "& msinfo32.exe /categories +systemsummary /nfo '$ms_info_nfo'"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $script -PercentComplete (($task_number / $total_steps) * 100)
-                            $empty_line | Out-String
-                            Write-Verbose "Please hold on, the ms_info.nfo file creation probably runs for a couple of minutes..." -verbose
-            Try {
-                # .nfo file
-                If ($PSVersionTable.PSVersion -ge 5.1) {
-                    & msinfo32.exe /categories +systemsummary /nfo "$ms_info_nfo"
-                } Else {
-                    & msinfo32.exe /categories +systemsummary /nfo "$ms_info_nfo" | Out-Null
-                } # Else (If $PSVersionTable.PSVersion)
-            } Catch { Write-Debug $_.Exception }
-
-                            do {    $processes = Get-Process
-                                    $time_elapsed = $timer.Elapsed
-
-                                    # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
-                                    Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("$script | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
-                                    Start-Sleep -Seconds 1
-                            }
-                            while  ( $processes.Name -contains 'msinfo32' )
-
-                    # .nfo to .xml conversion
-                    If ($PSVersionTable.PSVersion -ge 5.1) {
-                                    Try {
-                                        $ms_info_xml = [System.IO.Path]::ChangeExtension($ms_info_nfo,"xml")
-                                        $source_alfa = Get-Content $ms_info_nfo
-                                        $source_alfa.Replace("<>", "<type>") | Out-File "$ms_info_nfo" -Encoding UTF8
-                                        $source_beta = Get-Content $ms_info_nfo
-                                        $source_beta.Replace("</>", "</type>") | Out-File "$ms_info_nfo" -Encoding UTF8
-                                        $source_gamma = Get-Content $ms_info_nfo
-                                        $source_gamma | Out-File "$ms_info_xml" -Encoding UTF8
-                                        # [xml]$msinfo = Get-Content $ms_info_xml
-                                        # $msinfo.MsInfo.Category.Category.Category
-                                    } Catch { Write-Debug $_.Exception }
-                    } Else {
-                        $continue = $true
-                    } # Else (If $PSVersionTable.PSVersion)
-            $timer.Stop()
-            $timer.Reset()
-        } Else {
+            # Close msinfo32
+            If ( -not $msinfo32_process.HasExited) {
+                $msinfo32_process | Stop-Process -Force
+            }
+            Else {
+                $continue = $true
+            } # Else (If -not)
+        }
+        Else {
             $continue = $true
-        } # Else (If $Extract)
+        } # Else (If $msinfo32_process)
+
+        # Update the progress bar and start a timer
+        # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
+        $timer = [System.Diagnostics.Stopwatch]::StartNew()
+        $activity = "Processing Additional Options $task_number/$activities"
+        $script = "& msinfo32.exe /categories +systemsummary /report '$ms_info_txt'"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $script -PercentComplete (($task_number / $total_steps) * 100)
+        $empty_line | Out-String
+        Write-Verbose "Please hold on, the ms_info.txt file creation probably runs well over a minute..." -verbose
+        Try {
+            # .txt file
+            If ($PSVersionTable.PSVersion -ge 5.1) {
+                & msinfo32.exe /categories +systemsummary /report "$ms_info_txt"
+            }
+            Else {
+                & msinfo32.exe /categories +systemsummary /report "$ms_info_txt" | Out-Null
+            } # Else (If $PSVersionTable.PSVersion)
+        }
+        Catch { Write-Debug $_.Exception }
+
+        do {
+            $processes = Get-Process
+            $time_elapsed = $timer.Elapsed
+
+            # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
+            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("$script | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
+            Start-Sleep -Seconds 1
+        }
+        while ( $processes.Name -contains 'msinfo32' )
+
+        # Increment the counters
+        $task_number++
+        $switch_count++
+        # Close all msinfo32 instances
+        # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
+        $msinfo32_process = Get-Process msinfo32 -ErrorAction SilentlyContinue
+
+        If ($msinfo32_process) {
+
+            # Try gracefully first
+            $msinfo32_process.CloseMainWindow()
+            Start-Sleep -Seconds 3
+
+            # Close msinfo32
+            If ( -not $msinfo32_process.HasExited) {
+                $msinfo32_process | Stop-Process -Force
+            }
+            Else {
+                $continue = $true
+            } # Else (If -not)
+        }
+        Else {
+            $continue = $true
+        } # Else (If $msinfo32_process)
+
+        # Update the progress bar
+        $timer.Stop()
+        $timer.Reset()
+        $timer.Start()
+        $activity = "Processing Additional Options $task_number/$activities"
+        $script = "& msinfo32.exe /categories +systemsummary /nfo '$ms_info_nfo'"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $script -PercentComplete (($task_number / $total_steps) * 100)
+        $empty_line | Out-String
+        Write-Verbose "Please hold on, the ms_info.nfo file creation probably runs for a couple of minutes..." -verbose
+        Try {
+            # .nfo file
+            If ($PSVersionTable.PSVersion -ge 5.1) {
+                & msinfo32.exe /categories +systemsummary /nfo "$ms_info_nfo"
+            }
+            Else {
+                & msinfo32.exe /categories +systemsummary /nfo "$ms_info_nfo" | Out-Null
+            } # Else (If $PSVersionTable.PSVersion)
+        }
+        Catch { Write-Debug $_.Exception }
+
+        do {
+            $processes = Get-Process
+            $time_elapsed = $timer.Elapsed
+
+            # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
+            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("$script | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
+            Start-Sleep -Seconds 1
+        }
+        while ( $processes.Name -contains 'msinfo32' )
+
+        # .nfo to .xml conversion
+        If ($PSVersionTable.PSVersion -ge 5.1) {
+            Try {
+                $ms_info_xml = [System.IO.Path]::ChangeExtension($ms_info_nfo, "xml")
+                $source_alfa = Get-Content $ms_info_nfo
+                $source_alfa.Replace("<>", "<type>") | Out-File "$ms_info_nfo" -Encoding UTF8
+                $source_beta = Get-Content $ms_info_nfo
+                $source_beta.Replace("</>", "</type>") | Out-File "$ms_info_nfo" -Encoding UTF8
+                $source_gamma = Get-Content $ms_info_nfo
+                $source_gamma | Out-File "$ms_info_xml" -Encoding UTF8
+                # [xml]$msinfo = Get-Content $ms_info_xml
+                # $msinfo.MsInfo.Category.Category.Category
+            }
+            Catch { Write-Debug $_.Exception }
+        }
+        Else {
+            $continue = $true
+        } # Else (If $PSVersionTable.PSVersion)
+        $timer.Stop()
+        $timer.Reset()
+    }
+    Else {
+        $continue = $true
+    } # Else (If $Extract)
 
 
     # (3) MsInfo32.exe window
@@ -1407,22 +1467,24 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
     # Source: https://support.microsoft.com/en-us/help/300887/how-to-use-system-information-msinfo32-command-line-tool-switches
 
 
-        If ($MsInfo32) {
+    If ($MsInfo32) {
 
-            # Increment the counters
-            $task_number++
-            $switch_count++
+        # Increment the counters
+        $task_number++
+        $switch_count++
 
-                            # Update the progress bar
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $task = "msinfo32.exe"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
-            Try {
-                msinfo32.exe
-            } Catch { Write-Debug $_.Exception }
-        } Else {
-            $continue = $true
-        } # Else
+        # Update the progress bar
+        $activity = "Processing Additional Options $task_number/$activities"
+        $task = "msinfo32.exe"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
+        Try {
+            msinfo32.exe
+        }
+        Catch { Write-Debug $_.Exception }
+    }
+    Else {
+        $continue = $true
+    } # Else
 
 
     # (4) GatherNetworkInfo.vbs
@@ -1444,30 +1506,30 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
     # Credit: Paul-De: "Does anyone know what gatherNetworkInfo.vbs is?"  https://answers.microsoft.com/en-us/windows/forum/windows_7-security/does-anyone-know-what-gathernetworkinfovbs-is-its/63a302a6-cf69-4b9a-a3ef-4b2aff1b2514
 
 
-        If ($GatherNetworkInfo) {
+    If ($GatherNetworkInfo) {
 
-            # Increment the counters
-            $task_number++
-            $switch_count++
-            $folder = [string]$env:temp + "\Config\"
-            $system32 = [Environment]::GetFolderPath("System")
+        # Increment the counters
+        $task_number++
+        $switch_count++
+        $folder = [string]$env:temp + "\Config\"
+        $system32 = [Environment]::GetFolderPath("System")
 
-                            # Update the progress bar and start a timer
-                            # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
-                            # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
-                            $timer = [System.Diagnostics.Stopwatch]::StartNew()
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $task = "Cscript $system32\gatherNetworkInfo.vbs //Nologo"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
+        # Update the progress bar and start a timer
+        # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
+        # Source: http://stackoverflow.com/questions/28481811/how-to-correctly-check-if-a-process-is-running-and-stop-it
+        $timer = [System.Diagnostics.Stopwatch]::StartNew()
+        $activity = "Processing Additional Options $task_number/$activities"
+        $task = "Cscript $system32\gatherNetworkInfo.vbs //Nologo"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
 
-            # Notify the user if the PowerShell session is not elevated (has been run as an administrator)            # Credit: alejandro5042: "How to run exe with/without elevated privileges from PowerShell"
-            If (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator") -eq $true) {
-                $empty_line | Out-String
-                Write-Verbose "Please hold on, the GatherNetworkInfo.vbs script probably runs for a few minutes..." -verbose
-                If ($PSVersionTable.PSVersion -ge 5.1) {
-                    Cscript $system32\gatherNetworkInfo.vbs //Nologo
+        # Notify the user if the PowerShell session is not elevated (has been run as an administrator)            # Credit: alejandro5042: "How to run exe with/without elevated privileges from PowerShell"
+        If (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]"Administrator") -eq $true) {
+            $empty_line | Out-String
+            Write-Verbose "Please hold on, the GatherNetworkInfo.vbs script probably runs for a few minutes..." -verbose
+            If ($PSVersionTable.PSVersion -ge 5.1) {
+                Cscript $system32\gatherNetworkInfo.vbs //Nologo
 
-                            <#
+                <#
                             # Run the GatherNetworkInfo.vbs script as an background job
                             # Source: https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/start-job
                             # Source: https://msdn.microsoft.com/powershell/reference/5.1/Microsoft.PowerShell.Core/about/about_Jobs
@@ -1488,31 +1550,35 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
                             $timer.Stop()
                             $timer.Reset()
                             #>
-                } Else {
-                    Cscript $system32\gatherNetworkInfo.vbs //Nologo
-                } # Else
-                            If ((Test-Path $folder) -eq $true){
-                                $empty_line | Out-String
-                                Write-Verbose "The output of GatherNetworkInfo.vbs script may be found inside the '$folder' directory." -verbose
-                            } Else {
-                                "The content creation failed."
-                            } # Else
-            } Else {
+            }
+            Else {
+                Cscript $system32\gatherNetworkInfo.vbs //Nologo
+            } # Else
+            If ((Test-Path $folder) -eq $true) {
                 $empty_line | Out-String
-                Write-Warning "It seems that this script is run in a 'normal' PowerShell window."
-                $empty_line | Out-String
-                Write-Verbose "Please consider running this './Get-ComputerInfo' script in an elevated (administrator-level) PowerShell window, so that the called GatherNetworkInfo.vbs script can be run elevated as well." -verbose
-                $empty_line | Out-String
-                $admin_text = "For best results the GatherNetworkInfo.vbs script might be required to be run in an elevated window. An elevated PowerShell session can, for example, be initiated by starting PowerShell with the 'run as an administrator' option."
-                Write-Output $admin_text
-                $empty_line | Out-String
-                $exeption_text = "Didn't run the GatherNetworkInfo.vbs script."
-                Write-Output $exeption_text
-            } # Else (If Security.Principal)
+                Write-Verbose "The output of GatherNetworkInfo.vbs script may be found inside the '$folder' directory." -verbose
+            }
+            Else {
+                "The content creation failed."
+            } # Else
+        }
+        Else {
+            $empty_line | Out-String
+            Write-Warning "It seems that this script is run in a 'normal' PowerShell window."
+            $empty_line | Out-String
+            Write-Verbose "Please consider running this './Get-ComputerInfo' script in an elevated (administrator-level) PowerShell window, so that the called GatherNetworkInfo.vbs script can be run elevated as well." -verbose
+            $empty_line | Out-String
+            $admin_text = "For best results the GatherNetworkInfo.vbs script might be required to be run in an elevated window. An elevated PowerShell session can, for example, be initiated by starting PowerShell with the 'run as an administrator' option."
+            Write-Output $admin_text
+            $empty_line | Out-String
+            $exeption_text = "Didn't run the GatherNetworkInfo.vbs script."
+            Write-Output $exeption_text
+        } # Else (If Security.Principal)
 
-        } Else {
-            $continue = $true
-        } # Else (If $GatherNetworkInfo)
+    }
+    Else {
+        $continue = $true
+    } # Else (If $GatherNetworkInfo)
 
 
     # (5) Get-ComputerInfo cmdlet
@@ -1530,81 +1596,87 @@ If ((($real_output_path.Path).EndsWith("\")) -eq $true) { $real_output_path = $r
     # It seems that Get-ComputerInfo apparently works normally (without winrm quickconfig) on Windows 10 Insider Preview Build 15007.rs_prerelease.170107-1846
 
 
-        If ($Cmdlet) {
+    If ($Cmdlet) {
 
-            # Increment the counters
-            $task_number++
-            $switch_count++
-            $computer_info_original = "$real_output_path\computer_info_original.txt"
-            $computer_info_txt = "$real_output_path\computer_info.txt"
+        # Increment the counters
+        $task_number++
+        $switch_count++
+        $computer_info_original = "$real_output_path\computer_info_original.txt"
+        $computer_info_txt = "$real_output_path\computer_info.txt"
 
-                            # Update the progress bar
-                            $activity = "Processing Additional Options $task_number/$activities"
-                            $task = "Get-ComputerInfo"
-                            Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
-            Try {
-                # $win_rm = Get-Service "WinRM" -ErrorAction SilentlyContinue
-                $test = Get-Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
-            } Catch { Write-Debug $_.Exception
-            } Finally {
+        # Update the progress bar
+        $activity = "Processing Additional Options $task_number/$activities"
+        $task = "Get-ComputerInfo"
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($task_number / $total_steps) * 100)
+        Try {
+            # $win_rm = Get-Service "WinRM" -ErrorAction SilentlyContinue
+            $test = Get-Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
+        }
+        Catch {
+            Write-Debug $_.Exception
+        }
+        Finally {
 
-                If ($test -eq $null) {
+            If ($test -eq $null) {
 
-                    $empty_line | Out-String
-                    Write-Warning "It seems that the PowerShell version $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) doesn't contain the 'Get-ComputerInfo' cmdlet."
-                    $empty_line | Out-String
-                    $ps_text = "The 'Get-ComputerInfo' inbuilt cmdlet was first introcuded probably in PowerShell v3.1 or in PowerShell v5.1 at the latest. A command Get-Command Get-ComputerInfo might search for the cmdlet and `$PSVersionTable.PSVersion might reveal the PowerShell version."
-                    Write-Output $ps_text
-                    $empty_line | Out-String
-                    $skip_text = "Didn't run the inbuilt 'Get-ComputerInfo' cmdlet. Please disregard any (system generated) suggestions concerning running .\Get-ComputerInfo that might occur below this line and the command prompt."
-                    Write-Output $skip_text
+                $empty_line | Out-String
+                Write-Warning "It seems that the PowerShell version $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor) doesn't contain the 'Get-ComputerInfo' cmdlet."
+                $empty_line | Out-String
+                $ps_text = "The 'Get-ComputerInfo' inbuilt cmdlet was first introcuded probably in PowerShell v3.1 or in PowerShell v5.1 at the latest. A command Get-Command Get-ComputerInfo might search for the cmdlet and `$PSVersionTable.PSVersion might reveal the PowerShell version."
+                Write-Output $ps_text
+                $empty_line | Out-String
+                $skip_text = "Didn't run the inbuilt 'Get-ComputerInfo' cmdlet. Please disregard any (system generated) suggestions concerning running .\Get-ComputerInfo that might occur below this line and the command prompt."
+                Write-Output $skip_text
 
-                } Else {
+            }
+            Else {
 
-                    # Run the Get-ComputerInfo as an background job with a timer
-                    # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
-                    # Source: https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/start-job
-                    # Source: https://msdn.microsoft.com/powershell/reference/5.1/Microsoft.PowerShell.Core/about/about_Jobs
-                    $timer = [System.Diagnostics.Stopwatch]::StartNew()
-                    Remove-Job -Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
-                    $job = Start-Job -ScriptBlock {Get-ComputerInfo}
+                # Run the Get-ComputerInfo as an background job with a timer
+                # Source: https://msdn.microsoft.com/en-us/library/system.diagnostics.stopwatch(v=vs.110).aspx
+                # Source: https://msdn.microsoft.com/en-us/powershell/reference/5.1/microsoft.powershell.core/start-job
+                # Source: https://msdn.microsoft.com/powershell/reference/5.1/Microsoft.PowerShell.Core/about/about_Jobs
+                $timer = [System.Diagnostics.Stopwatch]::StartNew()
+                Remove-Job -Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
+                $job = Start-Job -ScriptBlock { Get-ComputerInfo }
 
-                            do {    $jobs = Get-Job
-                                    $time_elapsed = $timer.Elapsed
+                do {
+                    $jobs = Get-Job
+                    $time_elapsed = $timer.Elapsed
 
-                                    # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
-                                    Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("Get-ComputerInfo | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
-                                    Start-Sleep -Seconds 1
-                            }
-                            while  ((( $jobs | where { $_.Command -eq 'Get-ComputerInfo' }).State) -eq 'Running' )
+                    # Update the progress bar                                                         # Credit: Jeff: "Powershell show elapsed time"
+                    Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation "$([string]::Format("Get-ComputerInfo | Time Elapsed: {0:d2}:{1:d2}:{2:d2}", $time_elapsed.Hours, $time_elapsed.Minutes, $time_elapsed.Seconds))" -PercentComplete (($task_number / $total_steps) * 100)
+                    Start-Sleep -Seconds 1
+                }
+                while ((( $jobs | where { $_.Command -eq 'Get-ComputerInfo' }).State) -eq 'Running' )
 
-                    # Output the Get-ComputerInfo background job results as a text file
-                    #   \S      Any nonwhitespace character (excludes space, tab and carriage return).
-                    #   \d      Any decimal digit.
-                    # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
-                    $gin = Receive-Job -Job $job
-                    $gin | Out-File "$computer_info_original" -Encoding UTF8
-                    $gin_selection = Get-Content $computer_info_original | Where { $_ -match ': \S' }
-                    $gin_sorted = $gin_selection | sort
-                    $gin_sorted | Out-File "$computer_info_txt" -Encoding UTF8
-                    $empty_line | Out-String
-                    Write-Output $gin_sorted
-                    Remove-Job -Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
-                    $timer.Stop()
-                    $timer.Reset()
-                } # Else
+                # Output the Get-ComputerInfo background job results as a text file
+                #   \S      Any nonwhitespace character (excludes space, tab and carriage return).
+                #   \d      Any decimal digit.
+                # Source: http://powershellcookbook.com/recipe/qAxK/appendix-b-regular-expression-reference
+                $gin = Receive-Job -Job $job
+                $gin | Out-File "$computer_info_original" -Encoding UTF8
+                $gin_selection = Get-Content $computer_info_original | Where { $_ -match ': \S' }
+                $gin_sorted = $gin_selection | sort
+                $gin_sorted | Out-File "$computer_info_txt" -Encoding UTF8
+                $empty_line | Out-String
+                Write-Output $gin_sorted
+                Remove-Job -Command "Get-ComputerInfo" -ErrorAction SilentlyContinue
+                $timer.Stop()
+                $timer.Reset()
+            } # Else
 
-            } # Finally (Try)
-        } Else {
-            $continue = $true
-        } # Else
+        } # Finally (Try)
+    }
+    Else {
+        $continue = $true
+    } # Else
 
-                            # Close the progress bar if it has been opened
-                            If ($threshold -ge 2) {
-                                $activity = "Processing Additional Options"
-                                $task = "Finished processing additional options."
-                                Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($total_steps / $total_steps) * 100) -Completed
-                            } # If ($threshold)
+    # Close the progress bar if it has been opened
+    If ($threshold -ge 2) {
+        $activity = "Processing Additional Options"
+        $task = "Finished processing additional options."
+        Write-Progress -Id $id -Activity $activity -Status $status -CurrentOperation $task -PercentComplete (($total_steps / $total_steps) * 100) -Completed
+    } # If ($threshold)
 } # End
 
 
