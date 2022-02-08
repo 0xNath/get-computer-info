@@ -169,11 +169,14 @@ Begin {
 
     }
     Else {
-
+        $date = $date.Replace(" ", "_")
+        $date = $date.Replace("/", "-")
+        $date = $date.Replace(":", "-")
         # Resolve the Output-path ("ReportPath") (if the Output-path is specified as relative)
         $real_output_path = Resolve-Path -Path $Output
-        $csv_path = "$real_output_path\computer_info.csv"
-        $html_path = "$real_output_path\computer_info.html"
+
+        $csv_path = "$real_output_path\$computer\$date.csv"
+        $html_path = "$real_output_path\$computer\$date.html"
 
         # Create a HTML-file
         # $html_file = New-Item -ItemType File -Path "$real_output_path\computer_info_$timestamp.html" -Force           # an alternative filename format
@@ -1215,8 +1218,12 @@ Process {
             <td>' + $date + '</td>
         </tr>
         <tr>
+            <th>User:</th>
+            <td>' + $env:USERNAME + '</td>
+        </tr>
+        <tr>
             <th>Computer:</th>
-            <td>' + $host_name + '</td>
+            <td>' + $env:COMPUTERNAME + '</td>
         </tr>
     </table>
 
@@ -1257,7 +1264,7 @@ End {
 
     # Display the HTML-file in the default browser
     # & $real_output_path\time_zones.html
-    Start-Process -FilePath "$html_path"
+    #Start-Process -FilePath "$html_path"
 
 
 
