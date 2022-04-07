@@ -39,6 +39,7 @@ Begin {
     $empty_line = ""
     $computers = @()
     $osinfo = @()
+    $softwareinfo = @()
     $volumes = @()
     $partition_table = @()
     $available_computers = @()
@@ -169,11 +170,14 @@ Begin {
 
     }
     Else {
-
+        $date = $date.Replace(" ", "_")
+        $date = $date.Replace("/", "-")
+        $date = $date.Replace(":", "-")
         # Resolve the Output-path ("ReportPath") (if the Output-path is specified as relative)
         $real_output_path = Resolve-Path -Path $Output
-        $csv_path = "$real_output_path\computer_info.csv"
-        $html_path = "$real_output_path\computer_info.html"
+
+        $csv_path = "$real_output_path\$computer\$date.csv"
+        $html_path = "$real_output_path\$computer\$date.html"
 
         # Create a HTML-file
         # $html_file = New-Item -ItemType File -Path "$real_output_path\computer_info_$timestamp.html" -Force           # an alternative filename format
@@ -491,6 +495,26 @@ Process {
         } # else (OperatingSystem_data)
 
 
+        try {
+            $SAPversion = (Get-ChildItem C:\"Program Files (x86)"\SAP\FrontEnd\SAPgui\saplogon.exe).VersionInfo.FileVersion
+        }
+        catch {
+            $SAPversion = "Not installed"
+        }
+
+        try {
+            $NuancePDFversion = (Get-ChildItem C:\"Program Files (x86)"\Nuance\"Power PDF 20"\bin\NuancePDF.exe).VersionInfo.FileVersion
+        }
+        catch {
+            $NuancePDFversion = "Not installed"
+        }
+
+        $softwareinfo += $obj_info = New-Object -TypeName PSCustomObject -Property @{
+            'SAP version'       = $SAPversion
+            'NuancePDF version' = $NuancePDFversion
+        }
+
+
         $osinfo += $obj_info = New-Object -TypeName PSCustomObject -Property @{
             'Computer'                     = $name
             'Manufacturer'                 = $Manufacturer_data
@@ -594,10 +618,8 @@ Process {
             'Serial Number (Mother Board)' = $motherboard.SerialNumber
             'Serial Number (OS)'           = $os.SerialNumber
             'UUID'                         = $compsysprod.UUID
+            'SAP version'                  = $software.SAPVersion
         } # New-Object
-
-
-
 
         # Display OS Info in console
         $obj_osinfo_selection = $osinfo | Select-Object 'Computer', 'Manufacturer', 'Computer Model', 'System Type', 'Domain Role', 'Product Type', 'Chassis', 'PC Type', 'Is a Laptop?', 'Model Version', 'CPU', 'Video Card', 'Resolution', 'Operating System', 'Architecture', 'Windows Edition ID', 'Windows Installation Type', 'Windows Platform', 'Type', 'SP Version', 'Windows BuildLab Extended', 'Windows BuildLab', 'Windows Build Branch', 'Windows Build Number', 'Windows Release Id', 'Current Version', 'Memory', 'Video Card Memory', 'Logical Processors', 'Cores', 'Physical Processors', 'Country Code', 'OS Language', 'Video Card Driver Date', 'BIOS Release Date', 'OS Install Date', 'Last BootUp', 'UpTime', 'Date', 'Daylight Bias', 'Time Offset (Current)', 'Time Offset (Normal)', 'Time (Current)', 'Time (Normal)', 'Daylight In Effect', 'Time Zone', 'Connectivity', 'Mobile Broadband', 'OS Version', 'PowerShell Version', 'Video Card Version', 'BIOS Version', 'Mother Board Version', 'Serial Number (BIOS)', 'Serial Number (Mother Board)', 'Serial Number (OS)', 'UUID'
@@ -606,8 +628,12 @@ Process {
         $empty_line | Out-String
         $empty_line | Out-String
 
-
-
+        # Display software Info in console
+        $obj_softwareinfo_selection = $softwareinfo | Select-Object 'SAP version', 'NuancePDF version'
+        $obj_softwareinfo_selection.PSObject.TypeNames.Insert(0, "SOFTInfo")
+        Write-Output $obj_softwareinfo_selection
+        $empty_line | Out-String
+        $empty_line | Out-String
 
         # Retrieve additional disk information from volumes (Win32_Volume)
         $volumes_query = Get-WmiObject -class Win32_Volume -ComputerName $name
@@ -756,6 +782,7 @@ Process {
     # Write the Computer info -table and the headers of the main table
     Add-Content $html_file -Value ("
     <h3>Computer Info</h3>
+    <h4>Hardware</h4>
     <table class='stats'>
         <tr>
             <th>Generated:</th>
@@ -988,6 +1015,17 @@ Process {
         <tr>
             <th>UUID:</th>
             <td>" + ($osinfo | Select-Object -ExpandProperty 'UUID') + "</td>
+        </tr>
+    </table>
+    <h4>Software</h4>
+    <table class='stats'>
+        <tr>
+            <th>SAP version:</th>
+            <td>" + ($softwareinfo | Select-Object -ExpandProperty 'SAP version') + "</td>
+        </tr>
+        <tr>
+            <th>NuancePDF version:</th>
+            <td>" + ($softwareinfo | Select-Object -ExpandProperty 'NuancePDF version') + "</td>
         </tr>
     </table>
     <br />
@@ -1257,7 +1295,7 @@ End {
 
     # Display the HTML-file in the default browser
     # & $real_output_path\time_zones.html
-    Start-Process -FilePath "$html_path"
+    #Start-Process -FilePath "$html_path"
 
 
 
