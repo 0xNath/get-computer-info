@@ -1253,8 +1253,12 @@ Process {
             <td>' + $date + '</td>
         </tr>
         <tr>
+            <th>User:</th>
+            <td>' + $env:USERNAME + '</td>
+        </tr>
+        <tr>
             <th>Computer:</th>
-            <td>' + $host_name + '</td>
+            <td>' + $env:COMPUTERNAME + '</td>
         </tr>
     </table>
 
